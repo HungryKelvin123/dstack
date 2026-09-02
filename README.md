@@ -45,6 +45,10 @@ disable $david-mode
 
 when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context-only inspection and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
 
+### stable skill invocation
+
+invoke skills by name, such as `$david-mode`; do not paste a skill path from a previous task. codex manages installed plugin files in versioned cache folders so an old task can keep its exact snapshot. those folders are not a stable interface and must not be linked in prompts, automations, or documentation. after updating dstack, start a new task and invoke the current skill name normally.
+
 ## what david mode does
 
 david mode has sixteen roblox-focused playbooks:
@@ -206,6 +210,12 @@ codex plugin remove dstack@dstack-local
 codex plugin add dstack@dstack-local
 ```
 
+if you are developing from codex's default personal marketplace instead, reinstall with:
+
+```bash
+codex plugin add dstack@personal
+```
+
 remove it completely:
 
 ```bash
@@ -213,7 +223,7 @@ codex plugin remove dstack@dstack-local
 codex plugin marketplace remove dstack-local
 ```
 
-start a new codex task after installing or updating so the new skill catalog is loaded.
+start a new codex task after installing or updating so the new skill catalog is loaded. use `$david-mode`, not a copied path under `plugins/cache`.
 
 ## origin
 
