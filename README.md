@@ -29,19 +29,19 @@ start a new codex task after installation so codex reloads the skill catalog.
 
 ## get started
 
-put `$david-mode-dstack` at the start of a non-trivial roblox task:
+put `$david-mode` at the start of a non-trivial roblox task:
 
 ```text
-$david-mode-dstack this remote sometimes awards the same item twice. find the root cause, fix it, and tell me exactly what i should verify in studio.
+$david-mode this remote sometimes awards the same item twice. find the root cause, fix it, and tell me exactly what i should verify in studio.
 ```
 
 david mode picks the narrowest playbook, reads the relevant roblox rules, and calls the smaller skills only when the task needs them. it stays active for the current session after you invoke it. turn it off with:
 
 ```text
-disable $david-mode-dstack
+disable $david-mode
 ```
 
-`$unslop-dstack` runs on every prompt, even when david mode is off. every other dstack skill is explicit so the plugin doesn't load an entire engineering workflow for a tiny request.
+`$unslop` runs on every prompt, even when david mode is off. every other dstack skill is explicit so the plugin doesn't load an entire engineering workflow for a tiny request.
 
 when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context-only inspection and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
 
@@ -51,22 +51,22 @@ david mode has sixteen roblox-focused playbooks:
 
 | playbook | use it for |
 |---|---|
-| [investigation](./skills/david-mode-dstack/playbooks/investigation.md) | answer how a system behaves without changing it. |
-| [bug fix](./skills/david-mode-dstack/playbooks/bug-fix.md) | trace a defect to its root cause, fix it, and verify what can be verified locally. |
-| [performance issue](./skills/david-mode-dstack/playbooks/perf-issue.md) | measure a slowdown before changing performance-sensitive code. |
-| [hillclimb](./skills/david-mode-dstack/playbooks/hillclimb.md) | improve one measured result through controlled iterations. |
-| [runtime forensics](./skills/david-mode-dstack/playbooks/runtime-forensics.md) | investigate leaks, repeated work, replication problems, or lifecycle bugs. |
-| [trace forensics](./skills/david-mode-dstack/playbooks/trace-forensics.md) | inspect an existing trace or profiling artifact. |
-| [feature](./skills/david-mode-dstack/playbooks/feature.md) | add behavior with clear ownership, state, remote, and persistence boundaries. |
-| [refactoring](./skills/david-mode-dstack/playbooks/refactoring.md) | change structure without changing behavior. |
-| [prototype](./skills/david-mode-dstack/playbooks/prototype.md) | test competing designs cheaply before committing to one. |
-| [visual parity](./skills/david-mode-dstack/playbooks/visual-parity.md) | match an existing roblox ui or authored reference. |
-| [authoring a skill](./skills/david-mode-dstack/playbooks/authoring-a-skill.md) | create or edit agent instructions. |
-| [eval](./skills/david-mode-dstack/playbooks/eval.md) | test whether a skill or prompt change improves agent behavior. |
-| [autonomous run](./skills/david-mode-dstack/playbooks/autonomous-run.md) | complete a long, bounded roblox task without constant check-ins. |
-| [session pickup](./skills/david-mode-dstack/playbooks/session-pickup.md) | resume work from an earlier task or handoff. |
-| [pause safely](./skills/david-mode-dstack/playbooks/pause-safely.md) | stop long work in a state another task can resume. |
-| [multi-phase plan](./skills/david-mode-dstack/playbooks/multi-phase-plan.md) | divide a large change into independently verifiable phases. |
+| [investigation](./skills/david-mode/playbooks/investigation.md) | answer how a system behaves without changing it. |
+| [bug fix](./skills/david-mode/playbooks/bug-fix.md) | trace a defect to its root cause, fix it, and verify what can be verified locally. |
+| [performance issue](./skills/david-mode/playbooks/perf-issue.md) | measure a slowdown before changing performance-sensitive code. |
+| [hillclimb](./skills/david-mode/playbooks/hillclimb.md) | improve one measured result through controlled iterations. |
+| [runtime forensics](./skills/david-mode/playbooks/runtime-forensics.md) | investigate leaks, repeated work, replication problems, or lifecycle bugs. |
+| [trace forensics](./skills/david-mode/playbooks/trace-forensics.md) | inspect an existing trace or profiling artifact. |
+| [feature](./skills/david-mode/playbooks/feature.md) | add behavior with clear ownership, state, remote, and persistence boundaries. |
+| [refactoring](./skills/david-mode/playbooks/refactoring.md) | change structure without changing behavior. |
+| [prototype](./skills/david-mode/playbooks/prototype.md) | test competing designs cheaply before committing to one. |
+| [visual parity](./skills/david-mode/playbooks/visual-parity.md) | match an existing roblox ui or authored reference. |
+| [authoring a skill](./skills/david-mode/playbooks/authoring-a-skill.md) | create or edit agent instructions. |
+| [eval](./skills/david-mode/playbooks/eval.md) | test whether a skill or prompt change improves agent behavior. |
+| [autonomous run](./skills/david-mode/playbooks/autonomous-run.md) | complete a long, bounded roblox task without constant check-ins. |
+| [session pickup](./skills/david-mode/playbooks/session-pickup.md) | resume work from an earlier task or handoff. |
+| [pause safely](./skills/david-mode/playbooks/pause-safely.md) | stop long work in a state another task can resume. |
+| [multi-phase plan](./skills/david-mode/playbooks/multi-phase-plan.md) | divide a large change into independently verifiable phases. |
 
 when invoked, david mode:
 
@@ -76,7 +76,7 @@ when invoked, david mode:
 4. uses local checks such as rojo builds and deterministic tests.
 5. gives you the exact studio behavior that still needs manual playtesting.
 
-the complete router lives in [`skills/david-mode-dstack/SKILL.md`](./skills/david-mode-dstack/SKILL.md).
+the complete router lives in [`skills/david-mode/SKILL.md`](./skills/david-mode/SKILL.md).
 
 ## the roblox rules
 
@@ -98,32 +98,32 @@ you can invoke a focused skill directly when david mode would be unnecessary:
 
 | skill | use it for |
 |---|---|
-| [`$david-mode-dstack`](./skills/david-mode-dstack/SKILL.md) | route a non-trivial roblox task through a complete playbook. |
-| [`$how-dstack`](./skills/how-dstack/SKILL.md) | trace a roblox subsystem through modules, instances, remotes, replication, and persistence. |
-| [`$why-dstack`](./skills/why-dstack/SKILL.md) | recover why an implementation exists from code, history, and project decisions. |
-| [`$recall-dstack`](./skills/recall-dstack/SKILL.md) | rebuild recent project context before resuming work. |
-| [`$architect-dstack`](./skills/architect-dstack/SKILL.md) | design ownership, state, typed luau modules, remotes, and persistence boundaries. |
-| [`$blast-radius-dstack`](./skills/blast-radius-dstack/SKILL.md) | find what a change could break across the roblox project. |
-| [`$luau-best-practices-dstack`](./skills/luau-best-practices-dstack/SKILL.md) | review or write maintainable typed luau. |
-| [`$roblox-security-dstack`](./skills/roblox-security-dstack/SKILL.md) | review remotes, authority, purchases, rewards, rng, persistence, and abuse cases. |
-| [`$roblox-performance-dstack`](./skills/roblox-performance-dstack/SKILL.md) | diagnose client, server, physics, rendering, replication, or memory performance. |
-| [`$arena-dstack`](./skills/arena-dstack/SKILL.md) | compare independent attempts at the same bounded problem. |
-| [`$swarm-dstack`](./skills/swarm-dstack/SKILL.md) | split independent slices across parallel workers when the user requests it. |
-| [`$interrogate-dstack`](./skills/interrogate-dstack/SKILL.md) | run an adversarial review of a risky change. |
-| [`$tdd-dstack`](./skills/tdd-dstack/SKILL.md) | write a cheap deterministic regression test before a fix. |
-| [`$no-comments-dstack`](./skills/no-comments-dstack/SKILL.md) | remove narrating comments while preserving real constraints and invariants. |
-| [`$create-verification-skill-dstack`](./skills/create-verification-skill-dstack/SKILL.md) | create a reusable verification skill for a roblox repository. |
-| [`$maintain-verification-skill-dstack`](./skills/maintain-verification-skill-dstack/SKILL.md) | update that verification skill when the project changes. |
-| [`$show-me-your-work-dstack`](./skills/show-me-your-work-dstack/SKILL.md) | keep a reviewable decision log during long work. |
-| [`$figure-it-out-dstack`](./skills/figure-it-out-dstack/SKILL.md) | design a bounded playbook when none of the bundled ones fit. |
-| [`$teach-dstack`](./skills/teach-dstack/SKILL.md) | explain a system using both its implementation and its history. |
-| [`$reflect-dstack`](./skills/reflect-dstack/SKILL.md) | capture lessons from a completed task in the skills themselves. |
-| [`$automate-me-dstack`](./skills/automate-me-dstack/SKILL.md) | turn a user's recurring working style into a personal mode skill. |
-| [`$technical-writing-dstack`](./skills/technical-writing-dstack/SKILL.md) | write or review technical documentation. |
-| [`$unslop-dstack`](./skills/unslop-dstack/SKILL.md) | remove ai tells and vague prose. this one runs automatically. |
-| [`$bro-dstack`](./skills/bro-dstack/SKILL.md) | restate a technical answer in plain language. |
+| [`$david-mode`](./skills/david-mode/SKILL.md) | route a non-trivial roblox task through a complete playbook. |
+| [`$how`](./skills/how/SKILL.md) | trace a roblox subsystem through modules, instances, remotes, replication, and persistence. |
+| [`$why`](./skills/why/SKILL.md) | recover why an implementation exists from code, history, and project decisions. |
+| [`$recall`](./skills/recall/SKILL.md) | rebuild recent project context before resuming work. |
+| [`$architect`](./skills/architect/SKILL.md) | design ownership, state, typed luau modules, remotes, and persistence boundaries. |
+| [`$blast-radius`](./skills/blast-radius/SKILL.md) | find what a change could break across the roblox project. |
+| [`$luau-best-practices`](./skills/luau-best-practices/SKILL.md) | review or write maintainable typed luau. |
+| [`$roblox-security`](./skills/roblox-security/SKILL.md) | review remotes, authority, purchases, rewards, rng, persistence, and abuse cases. |
+| [`$roblox-performance`](./skills/roblox-performance/SKILL.md) | diagnose client, server, physics, rendering, replication, or memory performance. |
+| [`$arena`](./skills/arena/SKILL.md) | compare independent attempts at the same bounded problem. |
+| [`$swarm`](./skills/swarm/SKILL.md) | split independent slices across parallel workers when the user requests it. |
+| [`$interrogate`](./skills/interrogate/SKILL.md) | run an adversarial review of a risky change. |
+| [`$tdd`](./skills/tdd/SKILL.md) | write a cheap deterministic regression test before a fix. |
+| [`$no-comments`](./skills/no-comments/SKILL.md) | remove narrating comments while preserving real constraints and invariants. |
+| [`$create-verification-skill`](./skills/create-verification-skill/SKILL.md) | create a reusable verification skill for a roblox repository. |
+| [`$maintain-verification-skill`](./skills/maintain-verification-skill/SKILL.md) | update that verification skill when the project changes. |
+| [`$show-me-your-work`](./skills/show-me-your-work/SKILL.md) | keep a reviewable decision log during long work. |
+| [`$figure-it-out`](./skills/figure-it-out/SKILL.md) | design a bounded playbook when none of the bundled ones fit. |
+| [`$teach`](./skills/teach/SKILL.md) | explain a system using both its implementation and its history. |
+| [`$reflect`](./skills/reflect/SKILL.md) | capture lessons from a completed task in the skills themselves. |
+| [`$automate-me`](./skills/automate-me/SKILL.md) | turn a user's recurring working style into a personal mode skill. |
+| [`$technical-writing`](./skills/technical-writing/SKILL.md) | write or review technical documentation. |
+| [`$unslop`](./skills/unslop/SKILL.md) | remove ai tells and vague prose. this one runs automatically. |
+| [`$bro`](./skills/bro/SKILL.md) | restate a technical answer in plain language. |
 
-all dstack skill names end in `-dstack`, so they don't conflict with pstack or another plugin that uses the original names.
+dstack now uses the original short skill names. run dstack or pstack, not both, because their skill names overlap.
 
 ## principles
 
@@ -131,44 +131,44 @@ dstack also includes twenty-one small engineering principles. david mode reads a
 
 | principle | rule |
 |---|---|
-| [`laziness protocol`](./skills/principle-laziness-protocol-dstack/SKILL.md) | prefer deletion and the smallest complete change. |
-| [`foundational thinking`](./skills/principle-foundational-thinking-dstack/SKILL.md) | settle the core data structures before writing logic around them. |
-| [`redesign from first principles`](./skills/principle-redesign-from-first-principles-dstack/SKILL.md) | integrate a new requirement as if it had existed from the beginning. |
-| [`subtract before you add`](./skills/principle-subtract-before-you-add-dstack/SKILL.md) | remove dead weight before building on top of it. |
-| [`minimize reader load`](./skills/principle-minimize-reader-load-dstack/SKILL.md) | reduce wrappers, hidden state, and unnecessary mental jumps. |
-| [`outcome-oriented execution`](./skills/principle-outcome-oriented-execution-dstack/SKILL.md) | move directly toward the intended architecture during planned migrations. |
-| [`experience first`](./skills/principle-experience-first-dstack/SKILL.md) | choose the player's experience over implementation convenience. |
-| [`exhaust the design space`](./skills/principle-exhaust-the-design-space-dstack/SKILL.md) | compare competing prototypes when the right shape is unclear. |
-| [`build the lever`](./skills/principle-build-the-lever-dstack/SKILL.md) | create a repeatable tool or check for mechanical work. |
-| [`model the domain`](./skills/principle-model-the-domain-dstack/SKILL.md) | encode the game state in data structures instead of scattered conditionals. |
-| [`boundary discipline`](./skills/principle-boundary-discipline-dstack/SKILL.md) | validate at remotes and other external boundaries. |
-| [`type-system discipline`](./skills/principle-type-system-discipline-dstack/SKILL.md) | model typed luau states honestly and narrow external data. |
-| [`make operations idempotent`](./skills/principle-make-operations-idempotent-dstack/SKILL.md) | make retries converge to the same result. |
-| [`migrate callers, then delete legacy apis`](./skills/principle-migrate-callers-then-delete-legacy-apis-dstack/SKILL.md) | move every caller and remove the old internal api in the same change. |
-| [`separate before serializing shared state`](./skills/principle-separate-before-serializing-shared-state-dstack/SKILL.md) | remove unnecessary shared writers before adding locks or queues. |
-| [`prove it works`](./skills/principle-prove-it-works-dstack/SKILL.md) | verify the real artifact instead of trusting a proxy. |
-| [`fix root causes`](./skills/principle-fix-root-causes-dstack/SKILL.md) | reproduce the symptom and fix the cause instead of hiding it. |
-| [`sequence verifiable units`](./skills/principle-sequence-verifiable-units-dstack/SKILL.md) | make every phase end in a checkable state. |
-| [`guard the context window`](./skills/principle-guard-the-context-window-dstack/SKILL.md) | keep raw bulk out of the main task and return compact evidence. |
-| [`never block on the human`](./skills/principle-never-block-on-the-human-dstack/SKILL.md) | continue through safe reversible work without needless confirmation. |
-| [`encode lessons in structure`](./skills/principle-encode-lessons-in-structure-dstack/SKILL.md) | turn repeated instructions into checks, metadata, scripts, or skills. |
+| [`laziness protocol`](./skills/principle-laziness-protocol/SKILL.md) | prefer deletion and the smallest complete change. |
+| [`foundational thinking`](./skills/principle-foundational-thinking/SKILL.md) | settle the core data structures before writing logic around them. |
+| [`redesign from first principles`](./skills/principle-redesign-from-first-principles/SKILL.md) | integrate a new requirement as if it had existed from the beginning. |
+| [`subtract before you add`](./skills/principle-subtract-before-you-add/SKILL.md) | remove dead weight before building on top of it. |
+| [`minimize reader load`](./skills/principle-minimize-reader-load/SKILL.md) | reduce wrappers, hidden state, and unnecessary mental jumps. |
+| [`outcome-oriented execution`](./skills/principle-outcome-oriented-execution/SKILL.md) | move directly toward the intended architecture during planned migrations. |
+| [`experience first`](./skills/principle-experience-first/SKILL.md) | choose the player's experience over implementation convenience. |
+| [`exhaust the design space`](./skills/principle-exhaust-the-design-space/SKILL.md) | compare competing prototypes when the right shape is unclear. |
+| [`build the lever`](./skills/principle-build-the-lever/SKILL.md) | create a repeatable tool or check for mechanical work. |
+| [`model the domain`](./skills/principle-model-the-domain/SKILL.md) | encode the game state in data structures instead of scattered conditionals. |
+| [`boundary discipline`](./skills/principle-boundary-discipline/SKILL.md) | validate at remotes and other external boundaries. |
+| [`type-system discipline`](./skills/principle-type-system-discipline/SKILL.md) | model typed luau states honestly and narrow external data. |
+| [`make operations idempotent`](./skills/principle-make-operations-idempotent/SKILL.md) | make retries converge to the same result. |
+| [`migrate callers, then delete legacy apis`](./skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md) | move every caller and remove the old internal api in the same change. |
+| [`separate before serializing shared state`](./skills/principle-separate-before-serializing-shared-state/SKILL.md) | remove unnecessary shared writers before adding locks or queues. |
+| [`prove it works`](./skills/principle-prove-it-works/SKILL.md) | verify the real artifact instead of trusting a proxy. |
+| [`fix root causes`](./skills/principle-fix-root-causes/SKILL.md) | reproduce the symptom and fix the cause instead of hiding it. |
+| [`sequence verifiable units`](./skills/principle-sequence-verifiable-units/SKILL.md) | make every phase end in a checkable state. |
+| [`guard the context window`](./skills/principle-guard-the-context-window/SKILL.md) | keep raw bulk out of the main task and return compact evidence. |
+| [`never block on the human`](./skills/principle-never-block-on-the-human/SKILL.md) | continue through safe reversible work without needless confirmation. |
+| [`encode lessons in structure`](./skills/principle-encode-lessons-in-structure/SKILL.md) | turn repeated instructions into checks, metadata, scripts, or skills. |
 
 ## examples
 
 ```text
-bug fix:       $david-mode-dstack players sometimes receive a reward twice after reconnecting. trace the full outcome lifecycle and fix the root cause.
+bug fix:       $david-mode players sometimes receive a reward twice after reconnecting. trace the full outcome lifecycle and fix the root cause.
 
-feature:       $david-mode-dstack add this inventory feature. define server ownership, remote validation, replication, persistence, and the exact studio tests i should run.
+feature:       $david-mode add this inventory feature. define server ownership, remote validation, replication, persistence, and the exact studio tests i should run.
 
-security:      $roblox-security-dstack review every client-controlled value in this purchase flow.
+security:      $roblox-security review every client-controlled value in this purchase flow.
 
-performance:   $roblox-performance-dstack this mobile ui stutters when the list updates. find measurable causes before changing it.
+performance:   $roblox-performance this mobile ui stutters when the list updates. find measurable causes before changing it.
 
-architecture:  $architect-dstack design the typed luau modules and remote contract for this system before implementation.
+architecture:  $architect design the typed luau modules and remote contract for this system before implementation.
 
-review:        $blast-radius-dstack check this change against saved data, remotes, authored instances, and dependent client systems.
+review:        $blast-radius check this change against saved data, remotes, authored instances, and dependent client systems.
 
-explanation:   $how-dstack trace how this round state moves from the server to each player's ui.
+explanation:   $how trace how this round state moves from the server to each player's ui.
 ```
 
 ## studio mcp boundary
@@ -189,7 +189,7 @@ dstack's tests use node's built-in test runner:
 node --test tests/*.test.mjs
 ```
 
-the tests verify that all 45 skills use the `-dstack` namespace, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, and the studio mcp playtesting boundary remains part of the roblox contract.
+the tests verify that all 45 skill folders match their frontmatter, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, and the studio mcp playtesting boundary remains part of the roblox contract.
 
 ## update or remove
 

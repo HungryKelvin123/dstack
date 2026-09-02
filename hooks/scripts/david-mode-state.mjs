@@ -7,11 +7,11 @@ import { fileURLToPath } from "node:url";
 
 export const STATE_SCHEMA = 1;
 export const DEFAULT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-export const DISABLE_PHRASE = "disable $david-mode-dstack";
+export const DISABLE_PHRASE = "disable $david-mode";
 export const CLEANUP_CONCURRENCY = 16;
 
-const ACTIVATION = /^\s*\$david-mode-dstack(?:\s|$)/u;
-const DISABLE = /^\s*disable \$david-mode-dstack[.!]?\s*$/iu;
+const ACTIVATION = /^\s*\$david-mode(?:\s|$)/u;
+const DISABLE = /^\s*disable \$david-mode[.!]?\s*$/iu;
 const MAX_SESSION_ID_LENGTH = 512;
 
 export function hashValue(value) {
@@ -208,7 +208,7 @@ export async function handleHook(input, options = {}) {
     return {
       hookSpecificOutput: {
         hookEventName: "SessionStart",
-        additionalContext: "David Mode remains active for this resumed or compacted session. Apply the $david-mode-dstack skill. Do not infer authority beyond the user request.",
+        additionalContext: "David Mode remains active for this resumed or compacted session. Apply the $david-mode skill. Do not infer authority beyond the user request.",
       },
     };
   }
@@ -220,7 +220,7 @@ export async function handleHook(input, options = {}) {
     return {
       hookSpecificOutput: {
         hookEventName: "UserPromptSubmit",
-        additionalContext: "Apply the $unslop-dstack skill to every prose surface in this turn.",
+        additionalContext: "Apply the $unslop skill to every prose surface in this turn.",
       },
     };
   }
@@ -235,7 +235,7 @@ export async function handleHook(input, options = {}) {
     return {
       hookSpecificOutput: {
         hookEventName: "UserPromptSubmit",
-        additionalContext: "David sticky receipt: trusted session hook persisted this mode. Apply $david-mode-dstack and $unslop-dstack for this turn.",
+        additionalContext: "David sticky receipt: trusted session hook persisted this mode. Apply $david-mode and $unslop for this turn.",
       },
     };
   }
@@ -245,7 +245,7 @@ export async function handleHook(input, options = {}) {
     return {
       hookSpecificOutput: {
         hookEventName: "UserPromptSubmit",
-        additionalContext: "Apply the $unslop-dstack skill to every prose surface in this turn.",
+        additionalContext: "Apply the $unslop skill to every prose surface in this turn.",
       },
     };
   }
@@ -257,7 +257,7 @@ export async function handleHook(input, options = {}) {
   return {
     hookSpecificOutput: {
       hookEventName: "UserPromptSubmit",
-      additionalContext: "David Mode is active for this session. Apply $david-mode-dstack and $unslop-dstack for this turn. Do not infer authority beyond the user request.",
+      additionalContext: "David Mode is active for this session. Apply $david-mode and $unslop for this turn. Do not infer authority beyond the user request.",
     },
   };
 }

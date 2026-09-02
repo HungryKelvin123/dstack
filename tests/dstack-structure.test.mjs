@@ -17,19 +17,18 @@ async function filesUnder(directory) {
   return output;
 }
 
-test("every skill is namespaced and internally consistent", async () => {
+test("every skill name matches its folder and invocation policy", async () => {
   const directories = (await fs.readdir(skillsRoot, { withFileTypes: true }))
     .filter((entry) => entry.isDirectory());
   const names = new Set(directories.map((entry) => entry.name));
 
   for (const entry of directories) {
-    assert.match(entry.name, /-dstack$/);
     const skill = await fs.readFile(path.join(skillsRoot, entry.name, "SKILL.md"), "utf8");
     assert.equal(skill.match(/^name:\s*(.+)$/m)?.[1], entry.name);
 
     const policyPath = path.join(skillsRoot, entry.name, "agents", "openai.yaml");
     const policy = await fs.readFile(policyPath, "utf8");
-    const expected = entry.name === "unslop-dstack" ? "true" : "false";
+    const expected = entry.name === "unslop" ? "true" : "false";
     assert.match(policy, new RegExp(`allow_implicit_invocation: ${expected}`));
   }
 
@@ -60,7 +59,7 @@ test("DStack contains no active PStack or Poteto instructions", async () => {
 
 test("Roblox Studio MCP is context-only and never used for playtesting", async () => {
   const contract = await fs.readFile(path.join(root, "references", "roblox-engineering.md"), "utf8");
-  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode-dstack", "SKILL.md"), "utf8");
+  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
 
   assert.match(contract, /Roblox Studio MCP is context-only/i);
   assert.match(contract, /Never invoke its playtesting controls/i);
@@ -69,7 +68,7 @@ test("Roblox Studio MCP is context-only and never used for playtesting", async (
 });
 
 test("David Mode preflights Studio once and fails safely", async () => {
-  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode-dstack", "SKILL.md"), "utf8");
+  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
 
   assert.match(davidMode, /`list_roblox_studios`/i);
   assert.match(davidMode, /call it once/i);

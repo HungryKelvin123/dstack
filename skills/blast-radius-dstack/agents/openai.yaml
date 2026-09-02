@@ -1,6 +1,0 @@
-interface:
-  display_name: "Blast Radius"
-  short_description: "Trace Roblox change risk beyond the diff."
-  default_prompt: "Use $blast-radius-dstack for this request."
-policy:
-  allow_implicit_invocation: false

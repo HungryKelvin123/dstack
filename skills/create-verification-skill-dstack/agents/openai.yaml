@@ -1,6 +1,0 @@
-interface:
-  display_name: "Create Verification Skill"
-  short_description: "Create a Roblox project verification skill."
-  default_prompt: "Use $create-verification-skill-dstack for this request."
-policy:
-  allow_implicit_invocation: false

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Roblox performance DStack"
-  short_description: "Measure Roblox runtime performance."
-  default_prompt: "Use $roblox-performance-dstack to diagnose this performance issue."
-policy:
-  allow_implicit_invocation: false

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Principle Experience First"
-  short_description: "Apply when product, UX, or feature-scope tradeoffs come up. Choose user delight over..."
-  default_prompt: "Use $principle-experience-first-dstack for this request."
-policy:
-  allow_implicit_invocation: false

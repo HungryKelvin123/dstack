@@ -1,6 +1,6 @@
 {
   "name": "dstack",
-  "version": "0.1.0+codex.20260902020359",
+  "version": "0.1.0+codex.20260902022628",
   "description": "Roblox engineering workflows adapted from pstack for Codex.",
   "author": {
     "name": "HungryKelvin123"
@@ -26,9 +26,9 @@
       "Verify Luau changes"
     ],
     "defaultPrompt": [
-      "$david-mode-dstack fix this Roblox bug and verify it.",
-      "Use $architect-dstack to design this Roblox system.",
-      "Use $blast-radius-dstack to review this change."
+      "$david-mode fix this Roblox bug and verify it.",
+      "Use $architect to design this Roblox system.",
+      "Use $blast-radius to review this change."
     ]
   }
 }

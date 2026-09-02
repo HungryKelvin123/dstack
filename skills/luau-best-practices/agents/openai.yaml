@@ -1,0 +1,6 @@
+interface:
+  display_name: "Luau best practices DStack"
+  short_description: "Typed, maintainable Roblox Luau."
+  default_prompt: "Use $luau-best-practices to review this Luau code."
+policy:
+  allow_implicit_invocation: false

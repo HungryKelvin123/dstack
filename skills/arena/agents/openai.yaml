@@ -1,0 +1,6 @@
+interface:
+  display_name: "Arena"
+  short_description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the..."
+  default_prompt: "Use $arena for this request."
+policy:
+  allow_implicit_invocation: false

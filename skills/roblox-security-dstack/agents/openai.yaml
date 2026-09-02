@@ -1,6 +1,0 @@
-interface:
-  display_name: "Roblox security DStack"
-  short_description: "Audit Roblox authority and persistence."
-  default_prompt: "Use $roblox-security-dstack to audit this Roblox boundary."
-policy:
-  allow_implicit_invocation: false

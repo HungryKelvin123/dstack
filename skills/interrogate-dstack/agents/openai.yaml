@@ -1,6 +1,0 @@
-interface:
-  display_name: "Interrogate"
-  short_description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress..."
-  default_prompt: "Use $interrogate-dstack for this request."
-policy:
-  allow_implicit_invocation: false
