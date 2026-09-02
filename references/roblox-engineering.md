@@ -2,6 +2,10 @@
 
 Use repository instructions as the first authority. Read the project's design and architecture documents when they exist, then inspect the relevant source before describing implemented behavior. Use Roblox Studio context only when the repository cannot answer a necessary question.
 
+## API freshness
+
+Keep stable engineering invariants in DStack; treat exact engine signatures, enum values, quotas, service behavior, marketplace policy, and tool availability as time-sensitive. Before relying on one that the repository or current source does not establish, verify it in the current official Roblox Creator Hub or engine API reference. Do not preserve numeric limits in a skill unless that limit is the subject of the task. Report a conflict between current Roblox documentation and project code instead of silently choosing one.
+
 ## Runtime boundaries
 
 - The server owns currencies, inventory, progression, combat results, purchases, saved data, consequential RNG, permissions, and anti-abuse decisions.

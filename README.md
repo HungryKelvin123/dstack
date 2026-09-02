@@ -90,7 +90,7 @@ dstack's shared [roblox engineering contract](./references/roblox-engineering.md
 - rojo builds prove project assembly and serialization. they do not prove luau runtime behavior.
 - roblox studio mcp is for missing context only. **dstack never starts, stops, launches, or controls a studio playtest. you do all studio playtesting yourself.**
 
-dstack contains no rules tied to one specific game. repository instructions and design documents remain the authority for each project.
+dstack contains no rules tied to one specific game. repository instructions and design documents remain the authority for each project. exact roblox api signatures, limits, and platform policies are checked against current official documentation instead of being frozen into the skills.
 
 ## skills
 
@@ -107,6 +107,11 @@ you can invoke a focused skill directly when david mode would be unnecessary:
 | [`$luau-best-practices`](./skills/luau-best-practices/SKILL.md) | review or write maintainable typed luau. |
 | [`$roblox-security`](./skills/roblox-security/SKILL.md) | review remotes, authority, purchases, rewards, rng, persistence, and abuse cases. |
 | [`$roblox-performance`](./skills/roblox-performance/SKILL.md) | diagnose client, server, physics, rendering, replication, or memory performance. |
+| [`$roblox-data`](./skills/roblox-data/SKILL.md) | design safe persistence, schemas, session ownership, retries, and cross-server state. |
+| [`$roblox-networking`](./skills/roblox-networking/SKILL.md) | design remote protocols, replication, validation, and reliability. |
+| [`$roblox-monetization`](./skills/roblox-monetization/SKILL.md) | build retry-safe developer product, pass, and subscription flows. |
+| [`$roblox-ui`](./skills/roblox-ui/SKILL.md) | build responsive interfaces across touch, keyboard, mouse, and gamepad. |
+| [`$roblox-physics`](./skills/roblox-physics/SKILL.md) | design assemblies, constraints, collision, hit detection, and network ownership. |
 | [`$arena`](./skills/arena/SKILL.md) | compare independent attempts at the same bounded problem. |
 | [`$swarm`](./skills/swarm/SKILL.md) | split independent slices across parallel workers when the user requests it. |
 | [`$interrogate`](./skills/interrogate/SKILL.md) | run an adversarial review of a risky change. |
@@ -189,7 +194,7 @@ dstack's tests use node's built-in test runner:
 node --test tests/*.test.mjs
 ```
 
-the tests verify that all 45 skill folders match their frontmatter, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, and the studio mcp playtesting boundary remains part of the roblox contract.
+the tests verify that every skill folder matches its frontmatter, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, and the studio mcp playtesting boundary remains part of the roblox contract.
 
 ## update or remove
 

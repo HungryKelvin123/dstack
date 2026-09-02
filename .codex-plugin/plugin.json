@@ -1,6 +1,6 @@
 {
   "name": "dstack",
-  "version": "0.1.0+codex.20260902022628",
+  "version": "0.1.0+codex.20260902042035",
   "description": "Roblox engineering workflows adapted from pstack for Codex.",
   "author": {
     "name": "HungryKelvin123"
@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "DStack",
     "shortDescription": "Roblox engineering workflows",
-    "longDescription": "Engineering-grade Roblox and Luau workflows for architecture, debugging, security, performance, review, and verification.",
+    "longDescription": "Engineering-grade Roblox and Luau workflows for architecture, data, networking, monetization, UI, physics, debugging, security, performance, and verification.",
     "developerName": "HungryKelvin123",
     "category": "Developer Tools",
     "capabilities": [

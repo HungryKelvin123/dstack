@@ -1,0 +1,6 @@
+interface:
+  display_name: "Roblox UI"
+  short_description: "Build responsive cross-input Roblox interfaces"
+  default_prompt: "Use $roblox-ui to design or review this Roblox interface."
+policy:
+  allow_implicit_invocation: false

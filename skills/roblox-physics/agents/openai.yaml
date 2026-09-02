@@ -1,0 +1,6 @@
+interface:
+  display_name: "Roblox Physics"
+  short_description: "Design secure responsive Roblox physics"
+  default_prompt: "Use $roblox-physics to design or review this Roblox physics system."
+policy:
+  allow_implicit_invocation: false

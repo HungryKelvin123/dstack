@@ -29,7 +29,12 @@ Choose the narrowest playbook and read it before writing the task plan.
 - New or changed behavior: `playbooks/feature.md` and `$architect` when ownership, state, remotes, persistence, or more than one module boundary changes.
 - Behavior-preserving change: `playbooks/refactoring.md`.
 - Measured performance problem: `playbooks/perf-issue.md` and `$roblox-performance`.
-- Security, remotes, purchases, rewards, data, or consequential RNG: `$roblox-security`.
+- Persistence, schemas, session ownership, or cross-server state: `$roblox-data`.
+- Remote protocol, replication, or message-shape work: `$roblox-networking`.
+- Developer products, passes, subscriptions, or purchase fulfillment: `$roblox-monetization`.
+- Responsive GUI, input abstraction, or selection navigation: `$roblox-ui`.
+- Assemblies, constraints, collision, hit detection, or network ownership: `$roblox-physics`.
+- Authority, abuse resistance, rewards, or consequential RNG: `$roblox-security`.
 - Luau implementation or review: `$luau-best-practices`.
 - Risk review: `$blast-radius`. Use `$interrogate` only for a contested or high-risk design.
 - Explicit TDD or a cheap pure-logic regression target: `$tdd`.

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Roblox Data"
+  short_description: "Design safe Roblox persistence and shared state"
+  default_prompt: "Use $roblox-data to design or review this Roblox data flow."
+policy:
+  allow_implicit_invocation: false

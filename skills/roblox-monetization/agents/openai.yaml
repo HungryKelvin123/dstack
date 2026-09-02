@@ -1,0 +1,6 @@
+interface:
+  display_name: "Roblox Monetization"
+  short_description: "Build retry-safe Roblox purchase flows"
+  default_prompt: "Use $roblox-monetization to design or review this Roblox purchase flow."
+policy:
+  allow_implicit_invocation: false
