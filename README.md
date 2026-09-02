@@ -4,63 +4,54 @@ hey, i'm hungrykelvin123. my name's not actually david, funny enough. i've been 
 
 that's when i found [pstack](https://github.com/cursor/plugins/tree/main/pstack), a cursor plugin with a bunch of skills designed by a highly skilled engineer to help agents write high-quality code. unfortunately, i don't use cursor, so i used [pstack ported to codex](https://github.com/Aqua-123/pstack-for-codex) instead.
 
-this worked pretty well when i was designing the systems of my game, but one thing always nagged at me. because pstack was a generalized engineering plugin and wasn't made specifically for roblox, i found that my agents did much more than they needed to and wasted tokens. when it came to verifying code inside roblox, i also absolutely **despised** when ai used the roblox studio mcp server to playtest for me. it wastes a ton of tokens on minor fixes that i probably would have found myself.
+this worked pretty well when i was designing the systems of my game, but one thing always nagged at me. because pstack was a generalized engineering plugin and wasn't made specifically for roblox, i found that my agents did much more than they needed to and wasted tokens. when it comes to verifying code inside roblox, i also absolutely **despise** when ai uses the roblox studio mcp server to playtest for me. it wastes a ton of tokens on minor fixes that i probably would've found myself.
 
-that's why i created **dstack**. it's named after my friend david, one of the first people i developed on roblox with. dstack is specifically made *for* roblox and expects you to have the roblox studio mcp server available. i script in visual studio code and sync with rojo, but keep mcp open so the agent can inspect instances when files alone are not enough. most importantly, dstack explicitly forbids the agent from using mcp to playtest the game.
+that's why i created my own version, **dstack**. it's named after my friend david, one of the first people i developed on roblox with. dstack is specifically made *for* roblox and expects you to have the roblox studio mcp server available. i do all of my scripting in visual studio code and sync it to my game with rojo, but i keep the mcp server open so my agent can inspect instances when the files alone aren't enough. most importantly, dstack explicitly forbids the agent from using the mcp server to playtest the game, because that only produced useless results for me.
 
 have fun coding!
 
 ## install
 
-install dstack directly from github:
+this repository is a codex plugin marketplace. install it directly from github:
 
 ```bash
 codex plugin marketplace add HungryKelvin123/dstack
 codex plugin add dstack@dstack-local
 ```
 
-confirm the install:
+confirm that it installed:
 
 ```bash
 codex plugin list --json
 ```
 
+start a new codex task after installation so codex reloads the skill catalog.
+
 ## get started
 
-two steps:
-
-1. start a new codex task after installation or an update.
-2. put `$david-mode` at the start of any non-trivial roblox task.
+put `$david-mode` at the start of a non-trivial roblox task:
 
 ```text
 $david-mode this remote sometimes awards the same item twice. find the root cause, fix it, and tell me exactly what i should verify in studio.
 ```
 
-that's the normal workflow. david mode selects the smallest playbook and relevant focused skills. `$unslop` runs on every prompt; every other skill stays explicit so tiny tasks do not load a full workflow.
-
-invoke skills by name, not with a file path copied from another task. codex manages installed plugin files in versioned cache folders; those paths are not stable and should not appear in prompts, automations, or documentation.
-
-## usage
-
-use `$david-mode` whenever the task needs engineering rigor. on its first activation it checks the roblox studio mcp connection once, remembers the matching studio for context-only inspection, and continues from the repository when studio is unnecessary or unavailable.
-
-### just use `$david-mode`
-
-david mode is the main shortcut. it is a sticky mode for the current session and routes to narrower skills only when the task needs them. turn it off with:
+david mode picks the narrowest playbook, reads the relevant roblox rules, and calls the smaller skills only when the task needs them. it stays active for the current session after you invoke it. turn it off with:
 
 ```text
 disable $david-mode
 ```
 
-when invoked, david mode:
+`$unslop` runs on every prompt, even when david mode is off. every other dstack skill is explicit so the plugin doesn't load an entire engineering workflow for a tiny request.
 
-1. reads repository instructions and relevant source first.
-2. chooses the smallest playbook that fits the request.
-3. routes to roblox-specific architecture, luau, data, networking, monetization, ui, physics, security, performance, review, or verification skills when needed.
-4. uses local checks such as rojo builds and deterministic tests.
-5. gives you the exact studio behavior that still needs manual playtesting.
+when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context-only inspection and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
 
-it has sixteen playbooks:
+### stable skill invocation
+
+invoke skills by name, such as `$david-mode`; do not paste a skill path from a previous task. codex manages installed plugin files in versioned cache folders so an old task can keep its exact snapshot. those folders are not a stable interface and must not be linked in prompts, automations, or documentation. after updating dstack, start a new task and invoke the current skill name normally.
+
+## what david mode does
+
+david mode has sixteen roblox-focused playbooks:
 
 | playbook | use it for |
 |---|---|
@@ -81,42 +72,50 @@ it has sixteen playbooks:
 | [pause safely](./skills/david-mode/playbooks/pause-safely.md) | stop long work in a state another task can resume. |
 | [multi-phase plan](./skills/david-mode/playbooks/multi-phase-plan.md) | divide a large change into independently verifiable phases. |
 
-the full router is [`skills/david-mode/SKILL.md`](./skills/david-mode/SKILL.md).
+when invoked, david mode:
+
+1. reads the repository's own instructions and relevant source first.
+2. chooses the smallest playbook that fits the request.
+3. routes to roblox-specific architecture, luau, security, performance, review, or verification skills when needed.
+4. uses local checks such as rojo builds and deterministic tests.
+5. gives you the exact studio behavior that still needs manual playtesting.
+
+the complete router lives in [`skills/david-mode/SKILL.md`](./skills/david-mode/SKILL.md).
 
 ## the roblox rules
 
-dstack's shared [roblox engineering contract](./references/roblox-engineering.md) applies these defaults unless the repository says otherwise:
+dstack's shared [roblox engineering contract](./references/roblox-engineering.md) applies these defaults unless your repository says otherwise:
 
 - the server owns currencies, progression, combat results, purchases, saved data, consequential rng, permissions, and anti-abuse decisions.
 - clients handle input and presentation. every remote request is an untrusted claim that the server must validate.
-- datastore writes are idempotent, retry-safe, versioned, and explicit about failure behavior.
-- consequential random outcomes are server-owned and survive retries or reconnects safely.
+- datastore writes should be idempotent, retry-safe, versioned, and explicit about failure behavior.
+- consequential random outcomes belong on the server and must survive retries or reconnects safely.
 - performance work starts from evidence and accounts for mobile hardware, replication, physics, memory, and lifecycle cleanup.
-- rojo builds prove project assembly and serialization, not luau runtime behavior.
+- rojo builds prove project assembly and serialization. they do not prove luau runtime behavior.
 - roblox studio mcp is for missing context only. **dstack never starts, stops, launches, or controls a studio playtest. you do all studio playtesting yourself.**
 
-dstack contains no rules tied to one specific game. repository instructions and design documents remain authoritative for each project. exact roblox api signatures, limits, and platform policies are checked against current official documentation rather than frozen into skills.
+dstack contains no rules tied to one specific game. repository instructions and design documents remain the authority for each project. exact roblox api signatures, limits, and platform policies are checked against current official documentation instead of being frozen into the skills.
 
 ## skills
 
-`$david-mode` routes to most of these for you. invoke a focused skill directly only when the mode would be unnecessary:
+you can invoke a focused skill directly when david mode would be unnecessary:
 
 | skill | use it for |
 |---|---|
-| [`$david-mode`](./skills/david-mode/SKILL.md) | default entry point for a non-trivial roblox task. |
+| [`$david-mode`](./skills/david-mode/SKILL.md) | route a non-trivial roblox task through a complete playbook. |
 | [`$how`](./skills/how/SKILL.md) | trace a roblox subsystem through modules, instances, remotes, replication, and persistence. |
 | [`$why`](./skills/why/SKILL.md) | recover why an implementation exists from code, history, and project decisions. |
 | [`$recall`](./skills/recall/SKILL.md) | rebuild recent project context before resuming work. |
 | [`$architect`](./skills/architect/SKILL.md) | design ownership, state, typed luau modules, remotes, and persistence boundaries. |
 | [`$blast-radius`](./skills/blast-radius/SKILL.md) | find what a change could break across the roblox project. |
 | [`$luau-best-practices`](./skills/luau-best-practices/SKILL.md) | review or write maintainable typed luau. |
+| [`$roblox-security`](./skills/roblox-security/SKILL.md) | review remotes, authority, purchases, rewards, rng, persistence, and abuse cases. |
+| [`$roblox-performance`](./skills/roblox-performance/SKILL.md) | diagnose client, server, physics, rendering, replication, or memory performance. |
 | [`$roblox-data`](./skills/roblox-data/SKILL.md) | design safe persistence, schemas, session ownership, retries, and cross-server state. |
 | [`$roblox-networking`](./skills/roblox-networking/SKILL.md) | design remote protocols, replication, validation, and reliability. |
 | [`$roblox-monetization`](./skills/roblox-monetization/SKILL.md) | build retry-safe developer product, pass, and subscription flows. |
-| [`$roblox-physics`](./skills/roblox-physics/SKILL.md) | design assemblies, constraints, collision, hit detection, and network ownership. |
 | [`$roblox-ui`](./skills/roblox-ui/SKILL.md) | build responsive interfaces across touch, keyboard, mouse, and gamepad. |
-| [`$roblox-security`](./skills/roblox-security/SKILL.md) | review remotes, authority, purchases, rewards, rng, persistence, and abuse cases. |
-| [`$roblox-performance`](./skills/roblox-performance/SKILL.md) | diagnose client, server, physics, rendering, replication, or memory performance. |
+| [`$roblox-physics`](./skills/roblox-physics/SKILL.md) | design assemblies, constraints, collision, hit detection, and network ownership. |
 | [`$arena`](./skills/arena/SKILL.md) | compare independent attempts at the same bounded problem. |
 | [`$swarm`](./skills/swarm/SKILL.md) | split independent slices across parallel workers when the user requests it. |
 | [`$interrogate`](./skills/interrogate/SKILL.md) | run an adversarial review of a risky change. |
@@ -133,11 +132,11 @@ dstack contains no rules tied to one specific game. repository instructions and 
 | [`$unslop`](./skills/unslop/SKILL.md) | remove ai tells and vague prose. this one runs automatically. |
 | [`$bro`](./skills/bro/SKILL.md) | restate a technical answer in plain language. |
 
-dstack uses the original short skill names. run dstack or pstack, not both, because their skill names overlap.
+dstack now uses the original short skill names. run dstack or pstack, not both, because their skill names overlap.
 
 ## principles
 
-dstack also includes twenty-one small engineering principles. david mode reads at most the ones a task needs.
+dstack also includes twenty-one small engineering principles. david mode reads at most the ones a task actually needs.
 
 | principle | rule |
 |---|---|
@@ -170,8 +169,6 @@ bug fix:       $david-mode players sometimes receive a reward twice after reconn
 
 feature:       $david-mode add this inventory feature. define server ownership, remote validation, replication, persistence, and the exact studio tests i should run.
 
-data:          $roblox-data design the migration and retry behavior for this player profile change.
-
 security:      $roblox-security review every client-controlled value in this purchase flow.
 
 performance:   $roblox-performance this mobile ui stutters when the list updates. find measurable causes before changing it.
@@ -187,17 +184,21 @@ explanation:   $how trace how this round state moves from the server to each pla
 
 dstack expects roblox studio mcp to be available when the local repository cannot answer a necessary question about instances, attributes, tags, hierarchy, or authored content.
 
-it uses mcp for context only. it does **not** launch a test server, start or stop a test session, simulate a player, or control a running playtest. local checks happen through the repository and rojo. runtime playtesting stays with you.
+an explicit david mode activation checks the connection once. no connected studio means repository-only work continues, unless the task depends on unresolved studio-only state. in that case, dstack asks you to open the correct studio and mcp connection instead of guessing.
 
-if studio validation remains after local checks pass, dstack returns a short checklist with the exact behavior you should test.
+it does **not** use studio mcp to playtest. it does not launch a test server, start a test session, stop one, simulate a player, or control a running playtest. local checks happen through the repository and rojo. runtime playtesting stays with you.
 
-## develop
+if studio validation remains after the local checks pass, dstack returns a short checklist with the exact behavior you should test.
 
-run the bundled checks before contributing:
+## develop and verify
+
+dstack's tests use node's built-in test runner:
 
 ```bash
 node --test tests/*.test.mjs
 ```
+
+the tests verify that every skill folder matches its frontmatter, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, and the studio mcp playtesting boundary remains part of the roblox contract.
 
 ## update or remove
 
@@ -209,13 +210,13 @@ codex plugin remove dstack@dstack-local
 codex plugin add dstack@dstack-local
 ```
 
-if you are developing from codex's default personal marketplace instead:
+if you are developing from codex's default personal marketplace instead, reinstall with:
 
 ```bash
 codex plugin add dstack@personal
 ```
 
-remove dstack completely:
+remove it completely:
 
 ```bash
 codex plugin remove dstack@dstack-local
