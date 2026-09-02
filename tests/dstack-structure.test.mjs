@@ -67,3 +67,15 @@ test("Roblox Studio MCP is context-only and never used for playtesting", async (
   assert.match(contract, /The user performs Studio playtesting/i);
   assert.match(davidMode, /Never use Roblox Studio MCP playtest controls/i);
 });
+
+test("David Mode preflights Studio once and fails safely", async () => {
+  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode-dstack", "SKILL.md"), "utf8");
+
+  assert.match(davidMode, /`list_roblox_studios`/i);
+  assert.match(davidMode, /call it once/i);
+  assert.match(davidMode, /continuing with repository-only context/i);
+  assert.match(davidMode, /Do not retry during the same turn/i);
+  assert.match(davidMode, /correctness depends on an unresolved Studio-only fact, stop/i);
+  assert.match(davidMode, /Sticky turns reuse the result/i);
+  assert.match(davidMode, /never starts, stops, or controls a playtest/i);
+});

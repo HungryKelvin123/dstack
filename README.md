@@ -43,6 +43,8 @@ disable $david-mode-dstack
 
 `$unslop-dstack` runs on every prompt, even when david mode is off. every other dstack skill is explicit so the plugin doesn't load an entire engineering workflow for a tiny request.
 
+when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context-only inspection and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
+
 ## what david mode does
 
 david mode has sixteen roblox-focused playbooks:
@@ -172,6 +174,8 @@ explanation:   $how-dstack trace how this round state moves from the server to e
 ## studio mcp boundary
 
 dstack expects roblox studio mcp to be available when the local repository cannot answer a necessary question about instances, attributes, tags, hierarchy, or authored content.
+
+an explicit david mode activation checks the connection once. no connected studio means repository-only work continues, unless the task depends on unresolved studio-only state. in that case, dstack asks you to open the correct studio and mcp connection instead of guessing.
 
 it does **not** use studio mcp to playtest. it does not launch a test server, start a test session, stop one, simulate a player, or control a running playtest. local checks happen through the repository and rojo. runtime playtesting stays with you.
 

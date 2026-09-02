@@ -9,6 +9,17 @@ description: "Roblox engineering workflow router with architecture, security, pe
 
 Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) before acting. Repository instructions override generic DStack conventions.
 
+## Studio preflight
+
+On the turn that explicitly activates David Mode, check Studio once before choosing a playbook:
+
+1. If `list_roblox_studios` is available, call it once. Keep the matching Studio name and `studio_id` for later context-only inspection.
+2. If the tool is unavailable, fails, or returns no connected Studio, report `Roblox Studio MCP is unavailable; continuing with repository-only context.` Continue when the repository can answer the task. Do not retry during the same turn.
+3. If several Studios are connected, match by the repository or place name. Ask the user which Studio to use only when later inspection is necessary and the target remains ambiguous.
+4. Before changing code whose correctness depends on an unresolved Studio-only fact, stop and ask the user to open the target Studio and its MCP connection. Never guess that fact.
+
+Sticky turns reuse the result. Repeat the preflight only after a context-only Studio call fails or the user says the connection changed. The preflight checks connectivity only; it never starts, stops, or controls a playtest.
+
 ## Route the work
 
 Choose the narrowest playbook and read it before writing the task plan.
