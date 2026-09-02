@@ -1,0 +1,14 @@
+dstack
+Copyright (c) 2026 HungryKelvin123
+
+This project is a Roblox-focused derivative of pstack by Lauren Tan, originally
+distributed in the Cursor plugins repository under the MIT License:
+
+  https://github.com/cursor/plugins/tree/main/pstack
+
+The Codex adaptation began from pstack-for-codex by Aqua-123:
+
+  https://github.com/Aqua-123/pstack-for-codex
+
+The original MIT license is preserved in LICENSE. DStack is not an official
+Cursor, Roblox, OpenAI, pstack, or pstack-for-codex project.

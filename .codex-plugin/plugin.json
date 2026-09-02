@@ -1,0 +1,34 @@
+{
+  "name": "dstack",
+  "version": "0.1.0+codex.20260902014143",
+  "description": "Roblox engineering workflows adapted from pstack for Codex.",
+  "author": {
+    "name": "HungryKelvin123"
+  },
+  "license": "MIT",
+  "keywords": [
+    "roblox",
+    "luau",
+    "engineering-workflows",
+    "dstack",
+    "david-mode"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "DStack",
+    "shortDescription": "Roblox engineering workflows",
+    "longDescription": "Engineering-grade Roblox and Luau workflows for architecture, debugging, security, performance, review, and verification.",
+    "developerName": "HungryKelvin123",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Architect Roblox systems",
+      "Audit server authority",
+      "Verify Luau changes"
+    ],
+    "defaultPrompt": [
+      "$david-mode-dstack fix this Roblox bug and verify it.",
+      "Use $architect-dstack to design this Roblox system.",
+      "Use $blast-radius-dstack to review this change."
+    ]
+  }
+}

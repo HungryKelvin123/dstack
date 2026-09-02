@@ -1,0 +1,41 @@
+{
+  "description": "Session-scoped David Mode lifecycle hooks.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "resume|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$PLUGIN_ROOT/hooks/scripts/david-mode-state.mjs\"",
+            "timeout": 2,
+            "additionalContextLimit": 1200
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$PLUGIN_ROOT/hooks/scripts/david-mode-state.mjs\"",
+            "timeout": 2,
+            "additionalContextLimit": 1200
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$PLUGIN_ROOT/hooks/scripts/david-mode-state.mjs\"",
+            "timeout": 1
+          }
+        ]
+      }
+    ]
+  }
+}

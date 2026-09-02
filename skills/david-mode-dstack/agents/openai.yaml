@@ -1,0 +1,6 @@
+interface:
+  display_name: "David Mode"
+  short_description: "Roblox engineering workflow router."
+  default_prompt: "$david-mode-dstack"
+policy:
+  allow_implicit_invocation: false
