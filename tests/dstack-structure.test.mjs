@@ -72,6 +72,32 @@ test("Roblox Studio MCP has a guarded write fallback and never playtests", async
   assert.match(davidMode, /Never use Roblox Studio MCP playtest controls/i);
 });
 
+test("Roblox Studio MCP setup distinguishes missing from closed and pauses for restart", async () => {
+  const contract = await fs.readFile(path.join(root, "references", "roblox-engineering.md"), "utf8");
+  const setup = await fs.readFile(path.join(root, "references", "roblox-mcp-setup.md"), "utf8");
+  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
+
+  assert.match(contract, /roblox-mcp-setup\.md/i);
+  assert.match(setup, /official Roblox Studio MCP connection guide/i);
+  assert.match(setup, /Configured but not open/i);
+  assert.match(setup, /Missing or unconfigured/i);
+  assert.match(setup, /Do not infer installation failure from.*no connected Studio/i);
+  assert.match(setup, /stop the current turn immediately after asking/i);
+  assert.match(setup, /most accurate, most efficient.*highest-quality/i);
+  assert.match(setup, /Reply \*\*yes\*\*/i);
+  assert.match(setup, /\*\*no\*\* to continue without MCP/i);
+  assert.match(setup, /Quick connect/i);
+  assert.match(setup, /JSON configuration/i);
+  assert.match(setup, /CLI command/i);
+  assert.match(setup, /cmd\.exe \/c %LOCALAPPDATA%\\\\Roblox\\\\mcp\.bat/i);
+  assert.match(setup, /StudioMCP/i);
+  assert.match(setup, /restart the agent client\/Codex/i);
+  assert.match(setup, /End the turn/i);
+  assert.match(setup, /hard ban.*playtest/i);
+  assert.match(davidMode, /stop this turn and ask/i);
+  assert.match(davidMode, /successful.*setup.*ends the turn/i);
+});
+
 test("David Mode preflights Studio once and fails safely", async () => {
   const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
 

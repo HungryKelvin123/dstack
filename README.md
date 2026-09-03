@@ -6,7 +6,7 @@ that's when i found [pstack](https://github.com/cursor/plugins/tree/main/pstack)
 
 this worked pretty well when i was designing the systems of my game, but one thing always nagged at me. because pstack was a generalized engineering plugin and wasn't made specifically for roblox, i found that my agents did much more than they needed to and wasted tokens. when it comes to verifying code inside roblox, i also absolutely **despise** when ai uses the roblox studio mcp server to playtest for me. it wastes a ton of tokens on minor fixes that i probably would've found myself.
 
-that's why i created my own version, **dstack**. dstack is specifically made *for* roblox and expects you to have the roblox studio mcp server available. i do all of my scripting in visual studio code and sync it to my game with rojo, but i keep the mcp server open so my agent can inspect instances when the files alone aren't enough. most importantly, dstack explicitly forbids the agent from using the mcp server to playtest the game, because that only produced useless results for me.
+that's why i created my own version, **dstack**. dstack is specifically made *for* roblox and expects you to have the roblox studio mcp server available. i do all of my scripting in visual studio code and sync it to my game with rojo, but i keep the mcp server open so my agent can inspect instances when the files alone aren't enough. dstack is most accurate, most efficient, and produces its highest-quality work when mcp is connected to an open roblox studio session. most importantly, dstack explicitly forbids the agent from using the mcp server to playtest the game, because that only produced useless results for me.
 
 have fun coding!
 
@@ -43,7 +43,7 @@ disable $david-mode
 
 `$unslop` runs on every prompt, even when david mode is off. every other dstack skill is explicit so the plugin doesn't load an entire engineering workflow for a tiny request.
 
-when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context inspection or fallback writes and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
+when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context inspection or fallback writes and does not repeat the check on every sticky turn. if the runtime explicitly reports that the server is missing or unconfigured, david mode stops and asks whether you want client-specific setup; it does not continue that turn. if the server is configured but studio is closed or not connected, david mode tells you once and continues from the repository. after a successful setup, it directs you to restart codex/the agent client and retry the original task. it stops before changing code that depends on studio-only information it cannot verify.
 
 ### stable skill invocation
 
@@ -92,7 +92,7 @@ dstack's shared [roblox engineering contract](./references/roblox-engineering.md
 - consequential random outcomes belong on the server and must survive retries or reconnects safely.
 - performance work starts from evidence and accounts for mobile hardware, replication, physics, memory, and lifecycle cleanup.
 - rojo builds prove project assembly and serialization. they do not prove luau runtime behavior.
-- roblox studio mcp follows two modes. with a usable local repository and rojo/project sync, dstack edits source files and uses mcp for missing context. without rojo/project sync, or without a local repository connected to the target studio, dstack may make scoped non-playtest mcp edits and reports the exact studio paths. **dstack never starts, stops, launches, simulates, or controls a studio playtest. you do all studio playtesting yourself.**
+- roblox studio mcp follows two modes. with a usable local repository and rojo/project sync, dstack edits source files and uses mcp for missing context. without rojo/project sync, or without a local repository connected to the target studio, dstack may make scoped non-playtest mcp edits and reports the exact studio paths. when mcp is missing or unconfigured, it follows the stop-and-ask setup gate in [`references/roblox-mcp-setup.md`](./references/roblox-mcp-setup.md). **dstack never starts, stops, launches, simulates, or controls a studio playtest. you do all studio playtesting yourself.**
 
 dstack contains no rules tied to one specific game. repository instructions and design documents remain the authority for each project. exact roblox api signatures, limits, and platform policies are checked against current official documentation instead of being frozen into the skills.
 
@@ -186,7 +186,9 @@ dstack prefers a local source repository with rojo/project sync when it is avail
 
 if rojo/project sync is unavailable, or no local repository is both present and connected to the target studio, dstack can use all non-playtest mcp operations the server exposes within the user's requested scope. that includes inspecting and editing scripts, instances, properties, hierarchy, attributes, tags, attachments, and authored assets when the server supports those operations. dstack inspects before mutating, keeps writes narrow, and reports exact studio paths. studio-only edits are not repository diffs, test passes, or rojo proof.
 
-an explicit david mode activation checks the connection once. no connected studio means repository-only work continues when possible. if the task needs studio-only information or a fallback write, dstack asks you to open the correct studio and mcp connection instead of guessing. ambiguous target or repository connections also require confirmation before writing.
+an explicit david mode activation checks the connection once. no connected studio means repository-only work continues when possible; it is not proof that mcp is uninstalled. if the runtime explicitly reports that the server or tool is missing/unconfigured, dstack stops and asks whether you want setup. a **no** answer gives one quality notice and continues without mcp. a **yes** answer uses the client-specific path in the [official Roblox setup guide](https://create.roblox.com/docs/studio/mcp), then directs you to restart codex/the agent client (and studio when required) before retrying the original task. it does not attempt to resume in the same turn. ambiguous target or repository connections require confirmation before writing.
+
+the official guide is the source of truth for installation. it supports quick connect, JSON configuration, and CLI commands depending on the client; dstack does not assume one universal config file. use its current Windows or macOS command/configuration for the active client, preserve existing MCP servers, and verify the connection after restart.
 
 it does **not** use studio mcp to playtest. it does not launch a test server, start a test session, stop one, simulate a player, or control a running playtest. runtime playtesting stays with you.
 
@@ -200,7 +202,7 @@ dstack's tests use node's built-in test runner:
 node --test tests/*.test.mjs
 ```
 
-the tests verify that every skill folder matches its frontmatter, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, and the studio mcp playtesting boundary remains part of the roblox contract.
+the tests verify that every skill folder matches its frontmatter, only unslop allows implicit invocation, every internal skill reference resolves, david mode stays sticky, the missing-versus-closed mcp setup gate is explicit, and the studio mcp playtesting boundary remains part of the roblox contract.
 
 ## update or remove
 

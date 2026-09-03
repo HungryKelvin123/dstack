@@ -29,6 +29,7 @@ Keep stable engineering invariants in DStack; treat exact engine signatures, enu
 ## Authoring and verification
 
 - Preserve pivots, roots, attachments, tags, attributes, collision groups, streaming behavior, and clone/storage contracts when editing authored models.
+- When a Roblox Studio MCP call reports a missing or unconfigured server/tool, read [`roblox-mcp-setup.md`](roblox-mcp-setup.md) and apply its stop-and-ask installation gate. Do not classify an empty Studio connection list as an installation failure.
 - Use the Studio execution mode that matches the available source path:
   - **Repository mode (preferred):** when a local source repository and its Rojo/project sync to the target Studio are available, edit the repository and use Studio MCP only for missing context. The repository remains authoritative.
   - **Studio fallback mode:** when Rojo/project sync is unavailable, or no local repository is both present and connected to the target Studio, use all non-playtest MCP operations the server exposes within the user's requested scope. This may include inspecting and editing scripts, Instances, properties, hierarchy, attributes, tags, attachments, and authored assets. Inspect before mutating, keep writes narrow, and report exact Studio paths and operations.

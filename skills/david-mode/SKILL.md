@@ -7,18 +7,20 @@ description: "Roblox engineering workflow router with direct phases, evidence-fi
 
 `$david-mode` must be the first non-whitespace token in the prompt. The trusted hook may keep it active for the current session. `disable $david-mode` clears that session state. If the hook receipt is absent or stale, apply David Mode for the current turn and report that sticky mode is unavailable.
 
-Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) before acting. Repository instructions and the current source outrank generic DStack conventions. Delegation follows [`references/codex-agent-runtime.md`](references/codex-agent-runtime.md).
+Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) before acting. Read [`../../references/roblox-mcp-setup.md`](../../references/roblox-mcp-setup.md) when MCP setup, absence, or client configuration is relevant. Repository instructions and the current source outrank generic DStack conventions. Delegation follows [`references/codex-agent-runtime.md`](references/codex-agent-runtime.md).
 
 ## Studio preflight
 
 On the turn that explicitly activates David Mode, check Studio once before choosing a playbook:
 
 1. If `list_roblox_studios` is available, call it once. Keep the matching Studio name and `studio_id` for later context inspection or Studio-fallback writes.
-2. If the tool is unavailable, fails, or returns no connected Studio, report `Roblox Studio MCP is unavailable; continuing with repository-only context.` Continue when the repository can answer the task. Do not retry during the same turn.
-3. If several Studios are connected, match by the repository or place name. Ask the user which Studio to use only when later inspection is necessary and the target remains ambiguous.
-4. Before changing code whose correctness depends on an unresolved Studio-only fact, stop and ask the user to open the target Studio and its MCP connection. Never guess that fact.
+2. If the runtime explicitly reports that the Roblox Studio MCP server/tool is missing or unconfigured, follow [`../../references/roblox-mcp-setup.md`](../../references/roblox-mcp-setup.md): stop this turn and ask whether the user wants client-specific setup. Do not continue the original task or make writes while waiting for that answer.
+3. If the server is configured but the call fails because Studio is closed, disabled, or returns no connected Studio, report `Roblox Studio MCP is not connected; continuing with repository-only context.` Continue when the repository can answer the task. Do not ask the user to install it and do not retry during the same turn.
+4. If the runtime cannot distinguish missing configuration from a transient failure, report the uncertainty and ask the user to confirm the active client and connection state before writing. Do not guess.
+5. If several Studios are connected, match by the repository or place name. Ask the user which Studio to use only when later inspection is necessary and the target remains ambiguous.
+6. Before changing code whose correctness depends on an unresolved Studio-only fact, stop and ask the user to open the target Studio and its MCP connection. Never guess that fact.
 
-Sticky turns reuse the result. Repeat the preflight only after a context-only Studio call fails or the user says the connection changed. The preflight checks connectivity only; it never starts, stops, or controls a playtest.
+Sticky turns reuse the result. Repeat the preflight only after a context-only Studio call fails or the user says the connection changed. If the user accepts MCP setup, configure it using the setup reference, direct them to restart Codex/their agent client (and Studio when required), and end the turn; the user retries the original task after restart. The preflight checks connectivity only; it never starts, stops, or controls a playtest.
 
 ## Non-negotiables
 
@@ -27,6 +29,7 @@ Sticky turns reuse the result. Repeat the preflight only after a context-only St
 - Name the data shape, owner, lifecycle, replication path, persistence boundary, and failure behavior before adding stateful behavior.
 - Keep changes proportional. Preserve unrelated work, remove dead paths before adding structure, and do not invent unresolved gameplay, UX, monetization, progression, data, or architecture decisions.
 - Use the Studio execution mode from the Roblox engineering contract. Repository/Rojo mode keeps source files authoritative. Studio fallback mode permits scoped non-playtest MCP reads and writes when the source path is unavailable. Never use Roblox Studio MCP playtest controls or start, stop, or control a test session. The user performs Studio playtesting.
+- Apply the MCP setup gate before fallback writes. A missing or unconfigured server requires the stop-and-ask flow; a configured server with no open Studio is a connectivity condition, not an installation prompt. A `no` answer permits repository-only continuation after the one-time quality notice; a successful `yes` setup ends the turn for client restart.
 - Apply `$unslop` to every reply and agent-facing document. Keep replies direct without dropping evidence, tradeoffs, choices, or open decisions.
 
 ## Start with a bounded workflow
