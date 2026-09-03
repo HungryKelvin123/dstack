@@ -90,3 +90,19 @@ test("David Mode gates architecture and heavyweight parallel skills", async () =
   assert.match(davidMode, /\$arena` and `\$swarm` stay explicit/i);
   assert.match(davidMode, /Never call them for a small fix or a single design/i);
 });
+
+test("Architect is rigorous without making arena mandatory", async () => {
+  const architect = await fs.readFile(path.join(skillsRoot, "architect", "SKILL.md"), "utf8");
+  const runnerPrompt = await fs.readFile(path.join(skillsRoot, "architect", "references", "runner-prompt.md"), "utf8");
+
+  assert.match(architect, /Choose the depth/i);
+  assert.match(architect, /caller's intended usage/i);
+  assert.match(architect, /two or more modules or services/i);
+  assert.match(architect, /Use `\$arena` only when/i);
+  assert.match(architect, /Never run it for a Local change/i);
+  assert.match(architect, /Roblox Studio MCP is context-only/i);
+  assert.match(architect, /user performs Studio playtesting/i);
+  assert.match(architect, /Scrap when the architecture is wrong/i);
+  assert.match(runnerPrompt, /Caller-facing Luau usage/i);
+  assert.match(runnerPrompt, /Do not implement production code/i);
+});
