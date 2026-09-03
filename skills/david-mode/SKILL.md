@@ -26,7 +26,7 @@ Choose the narrowest playbook and read it before writing the task plan.
 
 - Read-only behavior or design question: `playbooks/investigation.md`, plus `$how` for runtime structure or `$why` for rationale.
 - Reported defect: `playbooks/bug-fix.md` and `$principle-fix-root-causes`.
-- New or changed behavior: `playbooks/feature.md` and `$architect` when ownership, state, remotes, persistence, or more than one module boundary changes.
+- New or changed behavior: `playbooks/feature.md`. Add `$architect` only when the implementation crosses two or more modules or services, changes a public/shared API or remote contract, introduces or changes server-owned state, persistence, replication, lifecycle ownership, or another load-bearing boundary. Skip it for a local edit with one clear owner and no boundary change.
 - Behavior-preserving change: `playbooks/refactoring.md`.
 - Measured performance problem: `playbooks/perf-issue.md` and `$roblox-performance`.
 - Persistence, schemas, session ownership, or cross-server state: `$roblox-data`.
@@ -39,6 +39,11 @@ Choose the narrowest playbook and read it before writing the task plan.
 - Risk review: `$blast-radius`. Use `$interrogate` only for a contested or high-risk design.
 - Explicit TDD or a cheap pure-logic regression target: `$tdd`.
 - Long or multi-phase work: `playbooks/multi-phase-plan.md` and `$show-me-your-work`.
+
+Heavy skills are gated:
+
+- `$arena` and `$swarm` stay explicit unless the user requests competing attempts or parallel work, or independently bounded slices make the benefit clear and the user has authorized parallel agents. Never call them for a small fix or a single design.
+- `$interrogate` is for a contested/high-risk design or an explicit adversarial review. `$blast-radius` is the lighter default for ordinary risk review.
 
 Use at most two principle skills unless the task genuinely spans more independent concerns. Read each selected principle in full and state only the decisions it changed.
 

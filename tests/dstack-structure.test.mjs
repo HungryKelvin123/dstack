@@ -78,3 +78,15 @@ test("David Mode preflights Studio once and fails safely", async () => {
   assert.match(davidMode, /Sticky turns reuse the result/i);
   assert.match(davidMode, /never starts, stops, or controls a playtest/i);
 });
+
+test("David Mode gates architecture and heavyweight parallel skills", async () => {
+  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
+  const featurePlaybook = await fs.readFile(path.join(skillsRoot, "david-mode", "playbooks", "feature.md"), "utf8");
+
+  assert.match(davidMode, /two or more modules or services/i);
+  assert.match(davidMode, /Skip it for a local edit with one clear owner/i);
+  assert.match(featurePlaybook, /two or more modules or services/i);
+  assert.match(featurePlaybook, /Skip it for a local change with one clear owner/i);
+  assert.match(davidMode, /\$arena` and `\$swarm` stay explicit/i);
+  assert.match(davidMode, /Never call them for a small fix or a single design/i);
+});

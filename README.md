@@ -1,12 +1,12 @@
 # dstack
 
-hey, i'm hungrykelvin123. my name's not actually david, funny enough. i've been developing games for about two years now, and ever since ai became much more prominent in the community, i've wanted a faster, deeper, and more token-efficient way to write, debug, and ship code for roblox games.
+hey, i'm hungrykelvin123. i've been developing games for about two years now, and ever since ai became much more prominent in the community, i've wanted a faster, deeper, and more token-efficient way to write, debug, and ship code for roblox games.
 
 that's when i found [pstack](https://github.com/cursor/plugins/tree/main/pstack), a cursor plugin with a bunch of skills designed by a highly skilled engineer to help agents write high-quality code. unfortunately, i don't use cursor, so i used [pstack ported to codex](https://github.com/Aqua-123/pstack-for-codex) instead.
 
 this worked pretty well when i was designing the systems of my game, but one thing always nagged at me. because pstack was a generalized engineering plugin and wasn't made specifically for roblox, i found that my agents did much more than they needed to and wasted tokens. when it comes to verifying code inside roblox, i also absolutely **despise** when ai uses the roblox studio mcp server to playtest for me. it wastes a ton of tokens on minor fixes that i probably would've found myself.
 
-that's why i created my own version, **dstack**. it's named after my friend david, one of the first people i developed on roblox with. dstack is specifically made *for* roblox and expects you to have the roblox studio mcp server available. i do all of my scripting in visual studio code and sync it to my game with rojo, but i keep the mcp server open so my agent can inspect instances when the files alone aren't enough. most importantly, dstack explicitly forbids the agent from using the mcp server to playtest the game, because that only produced useless results for me.
+that's why i created my own version, **dstack**. dstack is specifically made *for* roblox and expects you to have the roblox studio mcp server available. i do all of my scripting in visual studio code and sync it to my game with rojo, but i keep the mcp server open so my agent can inspect instances when the files alone aren't enough. most importantly, dstack explicitly forbids the agent from using the mcp server to playtest the game, because that only produced useless results for me.
 
 have fun coding!
 
