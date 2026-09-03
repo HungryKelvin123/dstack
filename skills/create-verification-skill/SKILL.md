@@ -12,7 +12,7 @@ The generated skill must define:
 - project assembly commands, including `rojo build` when Rojo is used;
 - existing unit or integration test commands and what each proves;
 - source or artifact invariants for security, persistence, remotes, authored models, and configuration when relevant;
-- safe context-only Studio inspection for information absent from source;
+- safe Studio context inspection; if source/sync is unavailable, document any user-authorized non-playtest MCP edit as an unverified Studio change rather than a local check;
 - a short checklist of user-run Studio scenarios with setup, action, expected observation, and cleanup;
 - failure handling and temporary-artifact cleanup.
 

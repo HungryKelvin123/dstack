@@ -5,7 +5,7 @@ description: "Design typed Luau ownership, module boundaries, remotes, state, pe
 
 # Architect for Roblox
 
-Design before implementation. This is a design gate, not a reason to expand scope. Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) first. Repository instructions and the current source outrank this skill. Roblox Studio MCP is context-only; never use its playtesting controls.
+Design before implementation. This is a design gate, not a reason to expand scope. Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) first. Repository instructions and the current source outrank this skill. Use the contract's Repository mode or Studio fallback mode; never use Roblox Studio MCP playtest controls.
 
 Delegation and optional capabilities follow [`../david-mode/references/codex-agent-runtime.md`](../david-mode/references/codex-agent-runtime.md).
 
@@ -70,7 +70,7 @@ Implement only when the request authorizes implementation. Treat the chosen sket
 - Build the smallest complete vertical slice in independently verifiable units.
 - Surface deviations immediately. A new parameter, owner, escape hatch, cast, optional field, or cross-boundary shortcut means the sketch may be wrong, the requirement may be missing, or the implementation may be overreaching.
 - Run the narrowest relevant local checks after each unit, then the repository's authoritative checks. For Rojo projects, run `rojo build`; it validates assembly and serialization, not Luau runtime behavior.
-- Use Studio MCP only for necessary context. The user performs Studio playtesting; give them an exact scenario instead of starting, stopping, or controlling a test session.
+- Use Repository mode when local source and Rojo/project sync are available. When that source path is unavailable, Studio fallback mode may make scoped non-playtest MCP edits to scripts and authored Instances. Inspect before mutating and report exact Studio paths. The user performs Studio playtesting; give them an exact scenario instead of starting, stopping, or controlling a test session.
 
 **Implementation is complete when:** the requested behavior is implemented against the chosen ownership and type contract, each unit has a check, the relevant local verification passes, and remaining user-run Studio validation is concrete.
 

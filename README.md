@@ -43,7 +43,7 @@ disable $david-mode
 
 `$unslop` runs on every prompt, even when david mode is off. every other dstack skill is explicit so the plugin doesn't load an entire engineering workflow for a tiny request.
 
-when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context-only inspection and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
+when you explicitly activate david mode, it calls `list_roblox_studios` once to check the studio mcp connection. it remembers the matching studio for later context inspection or fallback writes and does not repeat the check on every sticky turn. if studio or the mcp connection is closed, david mode tells you once and continues from the repository. it stops before changing code that depends on studio-only information it cannot verify.
 
 ### stable skill invocation
 
@@ -92,7 +92,7 @@ dstack's shared [roblox engineering contract](./references/roblox-engineering.md
 - consequential random outcomes belong on the server and must survive retries or reconnects safely.
 - performance work starts from evidence and accounts for mobile hardware, replication, physics, memory, and lifecycle cleanup.
 - rojo builds prove project assembly and serialization. they do not prove luau runtime behavior.
-- roblox studio mcp is for missing context only. **dstack never starts, stops, launches, or controls a studio playtest. you do all studio playtesting yourself.**
+- roblox studio mcp follows two modes. with a usable local repository and rojo/project sync, dstack edits source files and uses mcp for missing context. without rojo/project sync, or without a local repository connected to the target studio, dstack may make scoped non-playtest mcp edits and reports the exact studio paths. **dstack never starts, stops, launches, simulates, or controls a studio playtest. you do all studio playtesting yourself.**
 
 dstack contains no rules tied to one specific game. repository instructions and design documents remain the authority for each project. exact roblox api signatures, limits, and platform policies are checked against current official documentation instead of being frozen into the skills.
 
@@ -182,11 +182,13 @@ explanation:   $how trace how this round state moves from the server to each pla
 
 ## studio mcp boundary
 
-dstack expects roblox studio mcp to be available when the local repository cannot answer a necessary question about instances, attributes, tags, hierarchy, or authored content.
+dstack prefers a local source repository with rojo/project sync when it is available. in that mode, the repository stays authoritative and studio mcp supplies missing context.
 
-an explicit david mode activation checks the connection once. no connected studio means repository-only work continues, unless the task depends on unresolved studio-only state. in that case, dstack asks you to open the correct studio and mcp connection instead of guessing.
+if rojo/project sync is unavailable, or no local repository is both present and connected to the target studio, dstack can use all non-playtest mcp operations the server exposes within the user's requested scope. that includes inspecting and editing scripts, instances, properties, hierarchy, attributes, tags, attachments, and authored assets when the server supports those operations. dstack inspects before mutating, keeps writes narrow, and reports exact studio paths. studio-only edits are not repository diffs, test passes, or rojo proof.
 
-it does **not** use studio mcp to playtest. it does not launch a test server, start a test session, stop one, simulate a player, or control a running playtest. local checks happen through the repository and rojo. runtime playtesting stays with you.
+an explicit david mode activation checks the connection once. no connected studio means repository-only work continues when possible. if the task needs studio-only information or a fallback write, dstack asks you to open the correct studio and mcp connection instead of guessing. ambiguous target or repository connections also require confirmation before writing.
+
+it does **not** use studio mcp to playtest. it does not launch a test server, start a test session, stop one, simulate a player, or control a running playtest. runtime playtesting stays with you.
 
 if studio validation remains after the local checks pass, dstack returns a short checklist with the exact behavior you should test.
 

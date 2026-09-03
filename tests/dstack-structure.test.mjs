@@ -57,13 +57,18 @@ test("DStack contains no active PStack or Poteto instructions", async () => {
   }
 });
 
-test("Roblox Studio MCP is context-only and never used for playtesting", async () => {
+test("Roblox Studio MCP has a guarded write fallback and never playtests", async () => {
   const contract = await fs.readFile(path.join(root, "references", "roblox-engineering.md"), "utf8");
   const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
 
-  assert.match(contract, /Roblox Studio MCP is context-only/i);
-  assert.match(contract, /Never invoke its playtesting controls/i);
+  assert.match(contract, /Repository mode \(preferred\)/i);
+  assert.match(contract, /Studio fallback mode/i);
+  assert.match(contract, /all non-playtest MCP operations/i);
+  assert.match(contract, /Inspect before mutating/i);
+  assert.match(contract, /Full MCP fallback does not override/i);
+  assert.match(contract, /never invokes its playtesting controls/i);
   assert.match(contract, /The user performs Studio playtesting/i);
+  assert.match(davidMode, /Studio fallback mode permits scoped non-playtest MCP reads and writes/i);
   assert.match(davidMode, /Never use Roblox Studio MCP playtest controls/i);
 });
 
@@ -113,7 +118,7 @@ test("Architect is rigorous without making arena mandatory", async () => {
   assert.match(architect, /two or more modules or services/i);
   assert.match(architect, /Use `\$arena` only when/i);
   assert.match(architect, /Never run it for a Local change/i);
-  assert.match(architect, /Roblox Studio MCP is context-only/i);
+  assert.match(architect, /contract's Repository mode or Studio fallback mode/i);
   assert.match(architect, /user performs Studio playtesting/i);
   assert.match(architect, /Scrap when the architecture is wrong/i);
   assert.match(runnerPrompt, /Caller-facing Luau usage/i);

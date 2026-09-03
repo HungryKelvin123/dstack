@@ -14,4 +14,4 @@ Return one candidate package in this order:
 8. Alternatives considered and the reason this whole shape wins.
 9. A short rationale using [`rationale-template.md`](rationale-template.md).
 
-Keep the public surface small and make illegal states hard to construct. Separate persisted, server-runtime, replicated, and client-local state. Treat client input as a claim. Do not rely on undocumented engine behavior, invent product decisions, or use Roblox Studio MCP playtesting controls.
+Keep the public surface small and make illegal states hard to construct. Separate persisted, server-runtime, replicated, and client-local state. Treat client input as a claim. If Repository mode is unavailable, scoped non-playtest Studio MCP edits are allowed after inspecting the target; report exact paths and do not claim repository verification. Do not rely on undocumented engine behavior, invent product decisions, or use Roblox Studio MCP playtesting controls.

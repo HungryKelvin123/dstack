@@ -29,5 +29,9 @@ Keep stable engineering invariants in DStack; treat exact engine signatures, enu
 ## Authoring and verification
 
 - Preserve pivots, roots, attachments, tags, attributes, collision groups, streaming behavior, and clone/storage contracts when editing authored models.
-- Roblox Studio MCP is context-only. Never invoke its playtesting controls or start, stop, or control a test session. The user performs Studio playtesting.
-- Use the repository's own checks. For Rojo projects, `rojo build` proves project assembly and serialization, not Luau compilation or runtime behavior. Run narrower automated tests when they exist. Report the exact Studio behavior the user still needs to verify.
+- Use the Studio execution mode that matches the available source path:
+  - **Repository mode (preferred):** when a local source repository and its Rojo/project sync to the target Studio are available, edit the repository and use Studio MCP only for missing context. The repository remains authoritative.
+  - **Studio fallback mode:** when Rojo/project sync is unavailable, or no local repository is both present and connected to the target Studio, use all non-playtest MCP operations the server exposes within the user's requested scope. This may include inspecting and editing scripts, Instances, properties, hierarchy, attributes, tags, attachments, and authored assets. Inspect before mutating, keep writes narrow, and report exact Studio paths and operations.
+  - **Ambiguous mode:** when the target Studio or repository connection is unclear, do not guess. Ask the user before writing.
+- Full MCP fallback does not override the user's authority, destructive-write safeguards, or external-write checks. It never invokes its playtesting controls, and excludes starting, stopping, launching, simulating, or controlling any playtest. The user performs Studio playtesting.
+- Use the repository's own checks in Repository mode. For Rojo projects, `rojo build` proves project assembly and serialization, not Luau compilation or runtime behavior. In Studio fallback mode, report that repository tests, Rojo assembly, source diffs, and commits do not prove the Studio edit unless the user exports or syncs it afterward. Report the exact Studio behavior the user still needs to verify.

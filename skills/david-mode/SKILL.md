@@ -13,7 +13,7 @@ Read [`../../references/roblox-engineering.md`](../../references/roblox-engineer
 
 On the turn that explicitly activates David Mode, check Studio once before choosing a playbook:
 
-1. If `list_roblox_studios` is available, call it once. Keep the matching Studio name and `studio_id` for later context-only inspection.
+1. If `list_roblox_studios` is available, call it once. Keep the matching Studio name and `studio_id` for later context inspection or Studio-fallback writes.
 2. If the tool is unavailable, fails, or returns no connected Studio, report `Roblox Studio MCP is unavailable; continuing with repository-only context.` Continue when the repository can answer the task. Do not retry during the same turn.
 3. If several Studios are connected, match by the repository or place name. Ask the user which Studio to use only when later inspection is necessary and the target remains ambiguous.
 4. Before changing code whose correctness depends on an unresolved Studio-only fact, stop and ask the user to open the target Studio and its MCP connection. Never guess that fact.
@@ -26,7 +26,7 @@ Sticky turns reuse the result. Repeat the preflight only after a context-only St
 - Keep the Roblox client/server boundary explicit. The server owns consequential state and decisions. Client input is a claim that the server validates.
 - Name the data shape, owner, lifecycle, replication path, persistence boundary, and failure behavior before adding stateful behavior.
 - Keep changes proportional. Preserve unrelated work, remove dead paths before adding structure, and do not invent unresolved gameplay, UX, monetization, progression, data, or architecture decisions.
-- Roblox Studio MCP is context-only. Never use Roblox Studio MCP playtest controls or start, stop, or control a test session. The user performs Studio playtesting.
+- Use the Studio execution mode from the Roblox engineering contract. Repository/Rojo mode keeps source files authoritative. Studio fallback mode permits scoped non-playtest MCP reads and writes when the source path is unavailable. Never use Roblox Studio MCP playtest controls or start, stop, or control a test session. The user performs Studio playtesting.
 - Apply `$unslop` to every reply and agent-facing document. Keep replies direct without dropping evidence, tradeoffs, choices, or open decisions.
 
 ## Start with a bounded workflow
@@ -54,7 +54,7 @@ Mark an inapplicable phase as `skip` with a reason rather than silently losing i
 1. Read the repository instructions and design documents that govern the requested area. Inspect the relevant source, project mappings, tests, remotes, tags, attributes, and authored Instances before choosing a solution.
 2. For an existing or integrated subsystem, use `$how` to trace the narrowest complete runtime path. Use `$why` only when the existing rationale is a real constraint, contested, or missing from code and documents.
 3. For a fact that can be observed locally, inspect or probe it instead of asking the user to choose. Use `playbooks/prototype.md` only for a disposable local experiment that answers one empirical question; never use it to make a product decision or mutate production state.
-4. Use context-only Studio inspection when source and repository guidance cannot establish a necessary Instance path, metadata, placement, or runtime-only fact. Reuse the activation-turn Studio preflight and do not repeat it merely to check connectivity.
+4. Choose the Studio execution mode before touching authored content. If a local repository and its Rojo/project sync are available, edit source and use MCP for missing context. If Rojo/project sync is unavailable, or no local repository is both present and connected to the target Studio, use scoped non-playtest MCP reads and writes after the target is confirmed. Reuse the activation-turn Studio preflight and do not repeat it merely to check connectivity. If the connection is ambiguous, ask before writing.
 5. Stop and ask only for an unresolved decision that belongs to the user, such as gameplay intent, UX preference, monetization, progression, data policy, or a consequential architecture tradeoff. State the evidence and the smallest decision needed.
 
 ## Route the work
@@ -123,7 +123,7 @@ Before declaring done:
 
 1. Inspect the actual diff and every changed file. Check callers, callees, remotes, persistence, authored dependencies, and lifecycle consumers when a boundary changed.
 2. Run focused tests, the relevant suite, and the repository's required assembly check. Use `$blast-radius` for a concrete cross-boundary risk review.
-3. Separate proven local behavior from inference and user-run Studio validation. Give the user an exact scenario, expected result, and failure signal for any remaining Studio check.
+3. Separate proven local behavior, Studio-fallback edits, inference, and user-run Studio validation. Give the user an exact scenario, expected result, and failure signal for any remaining Studio check. Do not present a Studio-only edit as a repository diff, test pass, or Rojo proof.
 4. Report the outcome first, followed by changed paths, checks, tradeoffs, open decisions, and remaining risks. Do not claim runtime success that MCP or local checks did not prove.
 
 ## Redesign instead of patching a failing shape
