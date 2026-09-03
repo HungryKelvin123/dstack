@@ -5,7 +5,8 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const skillsRoot = path.join(root, "skills");
+const pluginRoot = path.join(root, "plugins", "dstack");
+const skillsRoot = path.join(pluginRoot, "skills");
 
 async function filesUnder(directory) {
   const output = [];
@@ -46,10 +47,56 @@ test("every skill name matches its folder and invocation policy", async () => {
   }
 });
 
+test("repository uses one nested cross-client plugin with two marketplace surfaces", async () => {
+  const codexMarketplace = JSON.parse(await fs.readFile(path.join(root, ".agents", "plugins", "marketplace.json"), "utf8"));
+  const claudeMarketplace = JSON.parse(await fs.readFile(path.join(root, ".claude-plugin", "marketplace.json"), "utf8"));
+  const codexManifest = JSON.parse(await fs.readFile(path.join(pluginRoot, ".codex-plugin", "plugin.json"), "utf8"));
+  const claudeManifest = JSON.parse(await fs.readFile(path.join(pluginRoot, ".claude-plugin", "plugin.json"), "utf8"));
+  const claudeHooks = JSON.parse(await fs.readFile(path.join(pluginRoot, "hooks", "claude-hooks.json"), "utf8"));
+
+  assert.equal(codexMarketplace.plugins[0].source.path, "./plugins/dstack");
+  assert.equal(claudeMarketplace.plugins[0].source, "./plugins/dstack");
+  assert.equal(codexMarketplace.plugins[0].name, "dstack");
+  assert.equal(claudeMarketplace.plugins[0].name, "dstack");
+  assert.equal(codexManifest.name, "dstack");
+  assert.equal(claudeManifest.name, "dstack");
+  assert.equal(codexManifest.version, claudeManifest.version);
+  assert.equal(claudeManifest.hooks, "./hooks/claude-hooks.json");
+  assert.equal(codexManifest.skills, "./skills/");
+  assert.equal(claudeManifest.skills, "./skills/");
+  assert.match(claudeHooks.hooks.SessionStart[0].hooks[0].command, /CLAUDE_PLUGIN_ROOT/);
+  assert.match(claudeHooks.hooks.UserPromptSubmit[0].hooks[0].command, /david-mode-state\.mjs/);
+});
+
+test("Codex prompt shims and Claude reviewer agents cover the explicit surfaces", async () => {
+  const directories = (await fs.readdir(skillsRoot, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory() && !entry.name.startsWith("principle-"))
+    .map((entry) => entry.name)
+    .sort();
+  const promptsRoot = path.join(pluginRoot, ".codex-plugin", "prompts");
+  const prompts = (await fs.readdir(promptsRoot)).filter((file) => file.endsWith(".md")).map((file) => file.slice(0, -3)).sort();
+  assert.deepEqual(prompts, directories);
+
+  for (const name of prompts) {
+    const prompt = await fs.readFile(path.join(promptsRoot, `${name}.md`), "utf8");
+    assert.match(prompt, new RegExp(`^name: ${name}$`, "m"));
+    assert.match(prompt, /disable-model-invocation: true/);
+    assert.match(prompt, new RegExp("Invoke the `" + name + "` skill", "i"));
+  }
+
+  for (const name of ["haiku", "sonnet", "opus"]) {
+    const agent = await fs.readFile(path.join(pluginRoot, "agents", `interrogate-${name}.md`), "utf8");
+    assert.match(agent, new RegExp(`^model: ${name}$`, "m"));
+    assert.match(agent, /read-only/i);
+    assert.match(agent, /playtest controls/i);
+  }
+});
+
 test("DStack contains no active PStack or Poteto instructions", async () => {
   const files = [
     ...await filesUnder(skillsRoot),
-    ...await filesUnder(path.join(root, "hooks")),
+    ...await filesUnder(path.join(pluginRoot, "hooks")),
+    ...await filesUnder(path.join(pluginRoot, "agents")),
   ].filter((file) => /\.(?:md|json|mjs|yaml)$/i.test(file));
   for (const file of files) {
     const source = await fs.readFile(file, "utf8");
@@ -58,7 +105,7 @@ test("DStack contains no active PStack or Poteto instructions", async () => {
 });
 
 test("Roblox Studio MCP has a guarded write fallback and never playtests", async () => {
-  const contract = await fs.readFile(path.join(root, "references", "roblox-engineering.md"), "utf8");
+  const contract = await fs.readFile(path.join(pluginRoot, "references", "roblox-engineering.md"), "utf8");
   const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
 
   assert.match(contract, /Repository mode \(preferred\)/i);
@@ -73,8 +120,8 @@ test("Roblox Studio MCP has a guarded write fallback and never playtests", async
 });
 
 test("Roblox Studio MCP setup distinguishes missing from closed and pauses for restart", async () => {
-  const contract = await fs.readFile(path.join(root, "references", "roblox-engineering.md"), "utf8");
-  const setup = await fs.readFile(path.join(root, "references", "roblox-mcp-setup.md"), "utf8");
+  const contract = await fs.readFile(path.join(pluginRoot, "references", "roblox-engineering.md"), "utf8");
+  const setup = await fs.readFile(path.join(pluginRoot, "references", "roblox-mcp-setup.md"), "utf8");
   const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
 
   assert.match(contract, /roblox-mcp-setup\.md/i);
@@ -96,6 +143,23 @@ test("Roblox Studio MCP setup distinguishes missing from closed and pauses for r
   assert.match(setup, /hard ban.*playtest/i);
   assert.match(davidMode, /stop this turn and ask/i);
   assert.match(davidMode, /successful.*setup.*ends the turn/i);
+});
+
+test("Interrogate uses a risk-bounded, observable model panel", async () => {
+  const interrogate = await fs.readFile(path.join(skillsRoot, "interrogate", "SKILL.md"), "utf8");
+  const panel = await fs.readFile(path.join(skillsRoot, "interrogate", "references", "interrogate-panel.md"), "utf8");
+  const models = JSON.parse(await fs.readFile(path.join(pluginRoot, "models.json"), "utf8"));
+
+  assert.match(interrogate, /does not assume.*parent model is different/i);
+  assert.match(interrogate, /single-model review/i);
+  assert.match(interrogate, /never silently replace/i);
+  assert.match(interrogate, /same intent.*complete diff/i);
+  assert.match(interrogate, /never.*playtest controls/i);
+  assert.match(panel, /Risk budget/i);
+  assert.match(panel, /served model/i);
+  assert.deepEqual(Object.keys(models.riskPolicy).sort(), ["critical", "crossModule", "local", "securityDataMonetization"]);
+  assert.equal(models.claude.interrogateReviewers.length, 3);
+  assert.equal(models.codex.interrogateReviewers.length, 3);
 });
 
 test("David Mode preflights Studio once and fails safely", async () => {

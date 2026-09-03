@@ -1,0 +1,29 @@
+{
+  "name": "dstack",
+  "owner": {
+    "name": "HungryKelvin123",
+    "url": "https://github.com/HungryKelvin123"
+  },
+  "description": "Roblox-focused engineering workflows for Claude Code and Codex, with guarded Studio MCP context and no playtesting controls.",
+  "plugins": [
+    {
+      "name": "dstack",
+      "source": "./plugins/dstack",
+      "description": "Engineering-grade Roblox and Luau workflows with David Mode, focused skills, and bounded multi-model review.",
+      "version": "0.6.6",
+      "author": {
+        "name": "HungryKelvin123"
+      },
+      "homepage": "https://github.com/HungryKelvin123/dstack",
+      "repository": "https://github.com/HungryKelvin123/dstack",
+      "license": "MIT",
+      "keywords": [
+        "roblox",
+        "luau",
+        "david-mode",
+        "mcp",
+        "engineering-workflows"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "name": "dstack-local",
+  "name": "dstack",
   "interface": {
     "displayName": "DStack"
   },
@@ -8,7 +8,7 @@
       "name": "dstack",
       "source": {
         "source": "local",
-        "path": "./"
+        "path": "./plugins/dstack"
       },
       "policy": {
         "installation": "AVAILABLE",

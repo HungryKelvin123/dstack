@@ -1,0 +1,6 @@
+interface:
+  display_name: "Setup DStack"
+  short_description: "Set up DStack for Claude Code or Codex and verify Roblox context."
+  default_prompt: "Use $setup-dstack to configure DStack for this client."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,21 @@
+name: validate dstack
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  structure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out repository
+        uses: actions/checkout@v4
+      - name: set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: run structure and behavior tests
+        run: node --test tests/*.test.mjs

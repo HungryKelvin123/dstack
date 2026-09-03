@@ -1,0 +1,23 @@
+{
+  "name": "dstack",
+  "displayName": "DStack",
+  "version": "0.6.6",
+  "description": "Engineering-grade Roblox and Luau workflows for Claude Code. David Mode routes bounded work, MCP context stays non-playtest, and Interrogate can use a guarded multi-model review panel.",
+  "author": {
+    "name": "HungryKelvin123"
+  },
+  "homepage": "https://github.com/HungryKelvin123/dstack",
+  "repository": "https://github.com/HungryKelvin123/dstack",
+  "license": "MIT",
+  "keywords": [
+    "roblox",
+    "luau",
+    "david-mode",
+    "mcp",
+    "code-review",
+    "engineering-workflows"
+  ],
+  "skills": "./skills/",
+  "agents": "./agents/",
+  "hooks": "./hooks/claude-hooks.json"
+}
