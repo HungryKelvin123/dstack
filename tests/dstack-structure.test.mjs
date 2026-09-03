@@ -91,6 +91,19 @@ test("David Mode gates architecture and heavyweight parallel skills", async () =
   assert.match(davidMode, /Never call them for a small fix or a single design/i);
 });
 
+test("David Mode uses direct phases and evidence-based questions", async () => {
+  const davidMode = await fs.readFile(path.join(skillsRoot, "david-mode", "SKILL.md"), "utf8");
+
+  assert.match(davidMode, /Start with a bounded workflow/i);
+  for (const phase of ["Ground", "Route", "Shape", "Implement", "Verify", "Report"]) {
+    assert.match(davidMode, new RegExp(`\\*\\*${phase}\\*\\*`, "i"));
+  }
+  assert.match(davidMode, /inspect or probe it instead of asking the user/i);
+  assert.match(davidMode, /Stop and ask only for an unresolved decision/i);
+  assert.match(davidMode, /playbooks\/prototype\.md.*disposable local experiment/i);
+  assert.match(davidMode, /Do not claim runtime success/i);
+});
+
 test("Architect is rigorous without making arena mandatory", async () => {
   const architect = await fs.readFile(path.join(skillsRoot, "architect", "SKILL.md"), "utf8");
   const runnerPrompt = await fs.readFile(path.join(skillsRoot, "architect", "references", "runner-prompt.md"), "utf8");

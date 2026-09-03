@@ -1,13 +1,13 @@
 ---
 name: david-mode
-description: "Roblox engineering workflow router with architecture, security, performance, review, and verification discipline. Invoke explicitly with $david-mode."
+description: "Roblox engineering workflow router with direct phases, evidence-first design, security, performance, review, and verification discipline. Invoke explicitly with $david-mode."
 ---
 
 # David Mode
 
 `$david-mode` must be the first non-whitespace token in the prompt. The trusted hook may keep it active for the current session. `disable $david-mode` clears that session state. If the hook receipt is absent or stale, apply David Mode for the current turn and report that sticky mode is unavailable.
 
-Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) before acting. Repository instructions override generic DStack conventions.
+Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) before acting. Repository instructions and the current source outrank generic DStack conventions. Delegation follows [`references/codex-agent-runtime.md`](references/codex-agent-runtime.md).
 
 ## Studio preflight
 
@@ -20,12 +20,49 @@ On the turn that explicitly activates David Mode, check Studio once before choos
 
 Sticky turns reuse the result. Repeat the preflight only after a context-only Studio call fails or the user says the connection changed. The preflight checks connectivity only; it never starts, stops, or controls a playtest.
 
+## Non-negotiables
+
+- Inspect the actual source and applicable repository guidance before deciding how the game works. Treat source as the authority for implemented behavior and design documents as the authority for intended behavior.
+- Keep the Roblox client/server boundary explicit. The server owns consequential state and decisions. Client input is a claim that the server validates.
+- Name the data shape, owner, lifecycle, replication path, persistence boundary, and failure behavior before adding stateful behavior.
+- Keep changes proportional. Preserve unrelated work, remove dead paths before adding structure, and do not invent unresolved gameplay, UX, monetization, progression, data, or architecture decisions.
+- Roblox Studio MCP is context-only. Never use Roblox Studio MCP playtest controls or start, stop, or control a test session. The user performs Studio playtesting.
+- Apply `$unslop` to every reply and agent-facing document. Keep replies direct without dropping evidence, tradeoffs, choices, or open decisions.
+
+## Start with a bounded workflow
+
+For work with more than one action, keep a compact checklist in working notes. Do not create a durable plan for a one-file edit. Use these phases in order:
+
+1. Ground
+2. Route
+3. Shape
+4. Implement
+5. Verify
+6. Report
+
+Mark an inapplicable phase as `skip` with a reason rather than silently losing it. Do not narrate every checklist item. A phase is complete only when its criterion is met:
+
+- **Ground**: the relevant entry point, source paths, constraints, owner, state, lifecycle, and missing facts are known.
+- **Route**: the narrowest playbook and no more than two principle skills are selected.
+- **Shape**: the caller usage, types, boundary, failure path, and verification target are concrete enough to implement without inventing structure.
+- **Implement**: the smallest complete vertical slice is present, or the request was design-only.
+- **Verify**: changed files and the relevant proof are inspected, with any Studio-only check handed to the user.
+- **Report**: the outcome, evidence, remaining risk, and next user action are clear.
+
+## Ground before deciding
+
+1. Read the repository instructions and design documents that govern the requested area. Inspect the relevant source, project mappings, tests, remotes, tags, attributes, and authored Instances before choosing a solution.
+2. For an existing or integrated subsystem, use `$how` to trace the narrowest complete runtime path. Use `$why` only when the existing rationale is a real constraint, contested, or missing from code and documents.
+3. For a fact that can be observed locally, inspect or probe it instead of asking the user to choose. Use `playbooks/prototype.md` only for a disposable local experiment that answers one empirical question; never use it to make a product decision or mutate production state.
+4. Use context-only Studio inspection when source and repository guidance cannot establish a necessary Instance path, metadata, placement, or runtime-only fact. Reuse the activation-turn Studio preflight and do not repeat it merely to check connectivity.
+5. Stop and ask only for an unresolved decision that belongs to the user, such as gameplay intent, UX preference, monetization, progression, data policy, or a consequential architecture tradeoff. State the evidence and the smallest decision needed.
+
 ## Route the work
 
 Choose the narrowest playbook and read it before writing the task plan.
 
 - Read-only behavior or design question: `playbooks/investigation.md`, plus `$how` for runtime structure or `$why` for rationale.
-- Reported defect: `playbooks/bug-fix.md` and `$principle-fix-root-causes`.
+- Reported defect: `playbooks/bug-fix.md` and `$principle-fix-root-causes`. Reproduce from source, tests, logs, or a local probe; runtime playtesting remains with the user.
 - New or changed behavior: `playbooks/feature.md`. Add `$architect` only when the implementation crosses two or more modules or services, changes a public/shared API or remote contract, introduces or changes server-owned state, persistence, replication, lifecycle ownership, or another load-bearing boundary. Skip it for a local edit with one clear owner and no boundary change.
 - Behavior-preserving change: `playbooks/refactoring.md`.
 - Measured performance problem: `playbooks/perf-issue.md` and `$roblox-performance`.
@@ -36,27 +73,61 @@ Choose the narrowest playbook and read it before writing the task plan.
 - Assemblies, constraints, collision, hit detection, or network ownership: `$roblox-physics`.
 - Authority, abuse resistance, rewards, or consequential RNG: `$roblox-security`.
 - Luau implementation or review: `$luau-best-practices`.
-- Risk review: `$blast-radius`. Use `$interrogate` only for a contested or high-risk design.
-- Explicit TDD or a cheap pure-logic regression target: `$tdd`.
-- Long or multi-phase work: `playbooks/multi-phase-plan.md` and `$show-me-your-work`.
+- A long or multi-phase run: `playbooks/multi-phase-plan.md` and `$show-me-your-work` when a later reviewer needs the decision trail.
 
-Heavy skills are gated:
+Use at most two principle skills. Read each selected principle in full and name only the decisions it changed:
 
-- `$arena` and `$swarm` stay explicit unless the user requests competing attempts or parallel work, or independently bounded slices make the benefit clear and the user has authorized parallel agents. Never call them for a small fix or a single design.
-- `$interrogate` is for a contested/high-risk design or an explicit adversarial review. `$blast-radius` is the lighter default for ordinary risk review.
+- `$principle-model-the-domain` for stateful logic, repeated shapes, or branching assumptions.
+- `$principle-boundary-discipline` for validation, error handling, remotes, or framework adapters.
+- `$principle-type-system-discipline` for public types, external data, or signatures.
+- `$principle-make-operations-idempotent` for retries, commands, persistence, or lifecycle loops.
+- `$principle-sequence-verifiable-units` for migrations, sweeps, or multi-step changes.
+- `$principle-prove-it-works` before declaring completion.
 
-Use at most two principle skills unless the task genuinely spans more independent concerns. Read each selected principle in full and state only the decisions it changed.
+## Shape the change
 
-## Execution rules
+Before stateful or cross-boundary code, write the smallest caller-facing usage first. Then make the shape explicit:
 
-- Inspect the actual source and repository guidance before deciding how the game works.
-- Prefer the smallest change that fixes the root cause and fits the existing architecture.
-- Name the authoritative state shape, its owner, lifecycle, replication path, and persistence boundary before adding stateful behavior.
-- Resolve observable facts through source, existing tests, local probes, or context-only Studio inspection. Ask the user only for unresolved gameplay, UX, monetization, progression, data, or architectural decisions.
-- Delegate only when the user requests parallel agents or the active runtime permits it and the work has safe, independent boundaries. Routine reading, editing, and checks stay local.
-- Preserve unrelated changes. Use the repository's required verification. Never use Roblox Studio MCP playtest controls.
-- Apply `$unslop` to every reply and agent-facing document.
+- separate persisted, server-runtime, replicated, and client-local state;
+- assign one owner to every mutation, connection, task, instance, cache, round, character, player, and server lifecycle;
+- type remote payloads and validate type, range, ownership, permission, rate, and current state at the server boundary;
+- trace validation, authoritative mutation, replication, presentation, persistence, retry, cleanup, and failure;
+- preserve authored roots, pivots, attachments, tags, attributes, collision groups, streaming assumptions, and clone/storage contracts;
+- state mobile CPU/memory, network, replication, physics, render, and instance-volume costs, with a measurement target where runtime evidence is unavailable.
 
-## Completion
+For broad or load-bearing work, invoke `$architect` under its depth gate. It must compare whole-shape alternatives when ambiguity or an irreversible boundary makes one design risky. Do not force an architecture exercise onto a local edit.
 
-Done means the requested behavior or answer is complete, the relevant local checks pass, the diff is reviewed, and any Studio-only validation is handed to the user as a concrete test. Lead the reply with the outcome. Include changed files, checks, remaining risks, and the exact user playtest when one remains.
+## Heavy-skill gates
+
+Heavy skills are escalation paths, not default ceremony:
+
+- `$arena` is for a genuine design bakeoff with isolated candidates, a gradeable rubric, and a synthesis decision. `$arena` and `$swarm` stay explicit for ordinary work. Never call them for a small fix or a single design. Never run arena for a Local change.
+- `$swarm` is for independently bounded coverage, exploration, or implementation slices. Use it only when the user requests parallel work or has authorized it and write isolation is proven. Never fan out shared mutable writes.
+- `$interrogate` is for a contested or high-risk design, or an explicit adversarial review. Do not spend multi-reviewer tokens on a settled local fix.
+- `$show-me-your-work` is for long, autonomous, unattended, or otherwise auditable work. Keep its trail local unless a future reviewer needs it committed.
+- `playbooks/prototype.md` is disposable and local. Delete or isolate its output before production implementation.
+
+If a heavy capability is unavailable, use the runtime contract's declared sequential or partial-result fallback and label the limitation. The parent task owns integration, authoritative checks, commits, pushes, and the final report.
+
+## Implement in verifiable units
+
+- Build the smallest complete vertical slice. End each unit with the narrowest relevant check before starting the next.
+- Surface a new owner, parameter, cast, optional field, escape hatch, pass-through call, or cross-boundary shortcut immediately. It may mean the shape is wrong, the requirement is missing, or the implementation is overreaching.
+- Prefer deletion and bounded work over extra layers, polling, broad scans, unbounded tables, remote chatter, duplicate connections, or speculative pooling.
+- For debugging, trace symptoms to root causes and add a cheap deterministic regression check when one exists. Do not hide a symptom behind a guard.
+- For Rojo projects, run `rojo build` as the project-assembly check. It validates mapping and serialization, not Luau compilation or runtime behavior.
+
+## Verify and report
+
+Before declaring done:
+
+1. Inspect the actual diff and every changed file. Check callers, callees, remotes, persistence, authored dependencies, and lifecycle consumers when a boundary changed.
+2. Run focused tests, the relevant suite, and the repository's required assembly check. Use `$blast-radius` for a concrete cross-boundary risk review.
+3. Separate proven local behavior from inference and user-run Studio validation. Give the user an exact scenario, expected result, and failure signal for any remaining Studio check.
+4. Report the outcome first, followed by changed paths, checks, tradeoffs, open decisions, and remaining risks. Do not claim runtime success that MCP or local checks did not prove.
+
+## Redesign instead of patching a failing shape
+
+Repeated friction is a redesign signal. Re-ground and reshape when the same ownership workaround, client-authority exception, lifecycle leak, type escape hatch, internal reach-through, or migration special case appears twice, or when two independent implementation deviations share a cause.
+
+Use `$how` to capture what the implementation taught, `$principle-redesign-from-first-principles` when the requirement changes the foundation, and `$principle-subtract-before-you-add` before adding the replacement. Return to `$architect` only when its depth gate is met. Do not average incompatible designs or preserve a throwaway compatibility layer without a concrete migration reason.
