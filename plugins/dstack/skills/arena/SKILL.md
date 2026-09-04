@@ -26,7 +26,7 @@ The N candidates will receive the same prompt, so the prompt is the contract. Ge
 
 1. State the artifact each candidate is producing and why the requested comparison earns its repeated-context and review cost. Settle shared constraints in the parent before dispatch; candidates must not depend on each other's intermediate work.
 2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. Concrete: `Adds a --dry-run flag that skips writes`. Vague: `code is correct`. The rubric is the picker's tool in Phase D; candidates only see the task.
-3. Choose the smallest candidate set that tests distinct parent-defined alternatives, normally two. Every candidate uses the active client's exact worker route from the runtime contract. Apply its concurrency limit and queue excess candidates. More attempts do not provide model diversity.
+3. Choose the smallest candidate set that tests distinct parent-defined alternatives, normally two. Classify the candidate before dispatch: use the narrow tier for a search or disposable sketch and the complex tier for bounded implementation or multi-step reasoning. Every candidate uses the active client's selected route from the runtime contract. Apply its concurrency limit and queue excess candidates. More attempts do not provide model diversity.
 4. Assign output paths. Each candidate writes to its own location (a git worktree where possible, otherwise `/tmp1-<slug>/candidate-<n>/`). N candidates writing to the same path is shared mutable state and fails the **separate-before-serializing-shared-state** principle skill test.
 
 ## Phase B: Fan out
@@ -39,7 +39,7 @@ If a candidate fails to produce output, proceed with N-1 and note the dropout in
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, use one fresh read-only worker under the same runtime policy as an independent judge when it can resolve a concrete comparison risk. It sees the rubric and completed candidates, scores each criterion, and recommends a base. It may run alongside the parent's reading in Phase D. If no extra judgment is needed or the exact worker route is unavailable, the parent scores directly and labels this phase parent-only. The parent owns the final decision.
+After all Phase B candidates complete, use one fresh read-only worker under the same selected tier as an independent judge when it can resolve a concrete comparison risk. It sees the rubric and completed candidates, scores each criterion, and recommends a base. It may run alongside the parent's reading in Phase D. If no extra judgment is needed or the selected worker route is unavailable, the parent scores directly and labels this phase parent-only. The parent owns the final decision.
 
 ## Phase D: Pick a base
 

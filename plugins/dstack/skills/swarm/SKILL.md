@@ -7,7 +7,7 @@ description: "Coordinate independent routine execution or exploration batches an
 
 Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
 
-Coordinate isolated workers for routine batches whose interfaces and acceptance criteria the parent has decided. Prefer distinct slices; duplicate attempts require an explicit comparison request. The parent plans the work, handles difficult implementation, reviews results, and returns one report. Use the active client's exact worker route and fallback from the runtime contract for every worker.
+Coordinate isolated workers for routine batches whose interfaces and acceptance criteria the parent has decided. Prefer distinct slices; duplicate attempts require an explicit comparison request. The parent plans the work, handles difficult implementation, reviews results, and returns one report. Select narrow for search/tagging/mechanical lanes and complex for bounded implementation/debugging lanes, using the active client's route and fallback from the runtime contract for every worker.
 
 ## Start
 
@@ -23,7 +23,7 @@ Open a todolist with one entry per phase before launching anything.
 1. State the done predicate and expected artifacts. Apply the runtime's context and overhead gates before choosing workers.
 2. Partition into independent execution or exploration slices. Keep prerequisite work sequential; new filenames do not remove dependencies. For an explicitly requested race, declare `first pass`, `rank all`, or `best-of` before spawning.
 3. Set N from the number of useful independent batches. Apply the runtime concurrency limit and queue excess work; never drop it silently.
-4. Resolve the exact worker model and effort from the runtime contract. A race compares attempts using that same pair; it does not select additional models.
+4. Resolve the worker tier, model, and effort from the runtime contract. A race compares attempts using that same selected route; it does not select additional models.
 5. Give each worker exclusive files, a separate worktree, or a separate output directory. Keep architectural decisions and difficult boundary code assigned to the parent.
 
 ## Phase B: Fan out

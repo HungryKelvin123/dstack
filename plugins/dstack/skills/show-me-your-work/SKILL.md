@@ -65,7 +65,7 @@ Fix the log, not the story. If the work diverged from what a row claims, the row
 
 ## Independent review of the trail
 
-Before handing back, request one read-only review using the active client's exact worker route from the runtime contract. If unavailable, the parent audits directly and labels the review parent-only. Record the requested and observed settings accurately. The worker reads the audit trail and supported task history or digest, then flags what the parent must check:
+Before handing back, request one read-only review using the active client's selected worker tier from the runtime contract. Use narrow for a simple audit trail check and complex for a multi-step or risk-sensitive trail. If unavailable, the parent audits directly and labels the review parent-only. Record the requested and observed settings accurately. The worker reads the audit trail and supported task history or digest, then flags what the parent must check:
 
 - Decisions logged with weak or absent evidence.
 - Verification steps skipped or claimed without proof in task history, receipts, or live state.

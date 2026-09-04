@@ -143,16 +143,21 @@ test("Roblox Studio MCP setup distinguishes missing from closed and pauses for r
   assert.match(davidMode, /successful.*setup.*ends the turn/i);
 });
 
-test("client worker metadata pins native routes without replacing the parent", async () => {
+test("client worker metadata pins native tiers without replacing the parent", async () => {
   const models = JSON.parse(await fs.readFile(path.join(pluginRoot, "models.json"), "utf8"));
 
-  assert.equal(models.schemaVersion, 3);
+  assert.equal(models.schemaVersion, 4);
   assert.equal(models.orchestrator.model, "user-selected-parent");
   assert.equal(models.orchestrator.reasoningEffort, "highest-supported");
   assert.deepEqual(models.orchestrator.owns, ["planning", "architecture", "difficult-implementation", "worker-review", "integration", "final-verification"]);
+  assert.deepEqual(models.orchestrator.preferredByClient, { claude: ["opus", "fable"] });
   assert.deepEqual(models.workers, {
     codex: { model: "gpt-5.6-luna", reasoningEffort: "max", fallback: "sequential-parent" },
-    claude: { model: "haiku", effort: "max", fallback: "sequential-parent" },
+    claude: {
+      narrow: { model: "haiku" },
+      complex: { model: "sonnet", effort: "high" },
+      fallback: "sequential-parent",
+    },
   });
   assert.deepEqual(models.delegation, { defaultMaxConcurrentWorkers: 2, maxConcurrentWorkers: 3, maxWorkerRevisions: 1, allowNestedDelegation: false });
   assert.deepEqual(models.riskPolicy, { local: 1, crossModule: 2, securityDataMonetization: 3, critical: 4 });
@@ -181,7 +186,7 @@ test("delegating workflows resolve one shared runtime and worker brief", async (
   assert.match(runtime, /workers\.claude/);
   assert.match(runtime, /native Agent\/subagent route/i);
   const readme = await fs.readFile(path.join(root, "README.md"), "utf8");
-  assert.match(readme, /Claude Code subagents use .*native `haiku` route/i);
+  assert.match(readme, /Claude Code uses native Haiku for narrow/i);
   const panelLinks = await linksFrom(path.join(skillsRoot, "interrogate", "references", "interrogate-panel.md"));
   assert.ok(panelLinks.includes(path.join(pluginRoot, "models.json")));
 });

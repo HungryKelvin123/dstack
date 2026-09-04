@@ -25,7 +25,7 @@ the repository uses the same distribution shape as mature multi-client plugins:
     ├── .codex-plugin/plugin.json
     ├── .codex-plugin/prompts/             # explicit Codex prompt shims
     ├── hooks/                             # separate Claude and Codex hook configs
-    ├── models.json                        # client-specific parent/worker policy and limits
+    ├── models.json                        # client-specific parent/worker tiers and limits
     ├── references/                        # shared Roblox contracts
     └── skills/                            # one shared skill tree
 ```
@@ -114,7 +114,7 @@ David Mode reads repository instructions and source first, chooses the smallest 
 
 your selected high-capability model, such as Sol, is the parent. it plans in order: architecture, module contracts, then execution tasks. it writes the difficult code, reviews every worker's actual changes, requests corrections, and owns integration and final checks. choose the highest reasoning effort your parent model supports for large work. dstack cannot change a running model's settings just by saying so.
 
-Codex subagents use `gpt-5.6-luna` at `max` reasoning effort. Claude Code subagents use Claude's native `haiku` route at `max` effort when that client/model pair supports it. The policies are separate because Luna is a Codex model, not a Claude model. Searchers, implementers, reviewers, and judges all use the active client's configured worker route. workers do not spawn more workers.
+Codex subagents use `gpt-5.6-luna` at `max` reasoning effort. Claude Code uses native Haiku for narrow, fast work such as file searches, tagging, summaries, and mechanical edits; it uses native Sonnet at `high` effort for independently bounded implementation, debugging, or multi-step reasoning. Claude's parent is normally Opus or another user-selected high-capability route such as Fable when the client exposes it. workers do not spawn more workers.
 
 David Mode can delegate routine work without you separately invoking Swarm, but only when it earns the overhead:
 
@@ -124,9 +124,9 @@ David Mode can delegate routine work without you separately invoking Swarm, but 
 - start with at most two concurrent workers, with a cap of three. add the third only when earlier output justifies the coordination cost. fewer is fine; queue the rest.
 - hand off named files, diffs, tests, and settled interfaces. the parent verifies them before releasing a dependent batch. workers get distinct ownership, not the same broad job.
 
-hard architecture, new security or data contracts, and other uncertain code stay with the parent. routine code inside a settled contract can go to the active client's worker route even when the surrounding update matters a lot.
+hard architecture, new security or data contracts, and other uncertain code stay with the parent. routine code inside a settled contract can go to the active client's narrow or complex worker tier when the lane is independent and reviewable; the parent still owns integration and final judgment.
 
-[`models.json`](./plugins/dstack/models.json) and the [runtime contract](./plugins/dstack/skills/david-mode/references/agent-runtime.md) define this policy. they are instructions, not a model-routing service. if the client cannot request its exact native worker model and effort, the parent continues sequentially and reports the limitation. dstack does not install a model bridge for you.
+[`models.json`](./plugins/dstack/models.json) and the [runtime contract](./plugins/dstack/skills/david-mode/references/agent-runtime.md) define this policy. they are instructions, not a model-routing service. classify each lane before dispatch: narrow or complex. if the client cannot request that tier's native model and effort, the parent continues sequentially and reports the limitation. dstack does not install a model bridge for you.
 
 ## skills
 
@@ -167,7 +167,7 @@ David Mode also reads the small `principle-*` skills only when their rule fits t
 
 ## Interrogate and model use
 
-Interrogate uses independent contexts from the active client's worker policy and a parent review. Codex uses Luna-`max`; Claude Code uses native Haiku-`max` when supported. it is not a multi-model panel, and agreement between reviewers is not proof of correctness. its reviewer budgets are ceilings, not minimums:
+Interrogate uses independent contexts from one selected tier of the active client's worker policy and a parent review. Codex uses Luna-`max`; Claude Code uses native Haiku for narrow reviews and native Sonnet-`high` for complex reviews. it is not a multi-model panel, and agreement between reviewers is not proof of correctness. its reviewer budgets are ceilings, not minimums:
 
 - one reviewer for a local change;
 - two for a cross-module change;

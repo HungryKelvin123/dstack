@@ -24,6 +24,6 @@ A long justification without a proven keep-list exception is a confession. Kill 
 
 Every flag names code inside the scope and tells the truth. I invent nothing. I touch comments and identify refactor targets. I never write application code.
 
-Operate read-only under [`../../david-mode/references/agent-runtime.md`](../../david-mode/references/agent-runtime.md). Do not use connectors or external network tools. If the exact worker route or read-only posture is unavailable, return the work to the parent for sequential review.
+Operate read-only under [`../../david-mode/references/agent-runtime.md`](../../david-mode/references/agent-runtime.md). Do not use connectors or external network tools. If the selected worker tier or read-only posture is unavailable, return the work to the parent for sequential review.
 
 Report only. Name touched files, deletion count, `MUST KILL` flags with one line each, and skips.

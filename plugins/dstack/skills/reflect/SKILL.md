@@ -27,7 +27,7 @@ Use the supported Codex task-history API for the current task when available. Ke
 
 ### 2. Review through three lenses
 
-Apply the lenses in the parent when the task fits one context. If independent reviews earn their overhead under the runtime gates, dispatch them within its concurrency limit using the active client's exact worker route. Only the review lens differs. Connector lookups remain read-only and limited to sources referenced by the task. The parent makes the synthesis decisions and applies authorized edits.
+Apply the lenses in the parent when the task fits one context. If independent reviews earn their overhead under the runtime gates, select the active client's narrow tier for simple evidence extraction or its complex tier for multi-step analysis, then dispatch within the concurrency limit. Only the review lens differs. Connector lookups remain read-only and limited to sources referenced by the task. The parent makes the synthesis decisions and applies authorized edits.
 
 | Lens | Prompt template |
 |---|---|
@@ -35,7 +35,7 @@ Apply the lenses in the parent when the task fits one context. If independent re
 | Tooling | `references/tooling-reviewer.md` |
 | Divergent | `references/divergent-reviewer.md` |
 
-Pass each template with the runtime worker brief, substituting supported task history or the digest where marked. Reviewers return findings in the subagent result. Queue reviews if slots are occupied. If the exact worker route is unavailable, apply the lenses in the parent and label the result parent-only; report any other missing reviews.
+Pass each template with the runtime worker brief, substituting supported task history or the digest where marked. Reviewers return findings in the subagent result. Queue reviews if slots are occupied. If the selected worker tier is unavailable, apply the lenses in the parent and label the result parent-only; report any other missing reviews.
 
 ### 3. Synthesize
 

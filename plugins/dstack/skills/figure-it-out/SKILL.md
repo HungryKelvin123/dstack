@@ -30,7 +30,7 @@ Present the framing and tradeoffs before committing to a long run. Reversible wo
 Decompose into atomic, independently-landable units. Sequence riskiest-unknown-first so option value stays high. Scaffold and verification come before features (the **foundational-thinking** principle skill).
 
 - Build the verification harness before the work, with the baseline captured from the pre-change state, so the check reads as "old value vs new value".
-- For one-way-door design decisions, use **architect** under its depth gate. The parent owns the design and any justified **arena** comparison; every delegated candidate or reviewer follows the runtime's exact worker policy. Skip it for mechanical work whose shape is already concrete.
+- For one-way-door design decisions, use **architect** under its depth gate. The parent owns the design and any justified **arena** comparison; every delegated candidate or reviewer follows the runtime's selected client-native worker tier. Skip it for mechanical work whose shape is already concrete.
 - Decide what stays sequential and what can execute independently after the parent settles its contract. Apply the runtime's context, overhead, and isolation gates before dispatch. A separate branch alone does not isolate writes.
 - Write the designed phase list down. That list is what the human reviews.
 

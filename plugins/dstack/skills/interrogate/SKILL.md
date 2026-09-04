@@ -7,7 +7,7 @@ description: "Challenge risky Roblox code or designs with bounded, independent r
 
 Interrogate is a bounded adversarial review. It does not implement fixes, does not auto-apply findings, and never uses Roblox Studio MCP playtest controls. Read [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md), [`references/interrogate-panel.md`](references/interrogate-panel.md), and [`../../models.json`](../../models.json) before dispatching reviewers.
 
-Every reviewer uses the active client's exact worker route from the runtime contract. Codex uses Luna-max; Claude Code uses native Haiku-max when supported. This is a single-model reviewer panel with independent contexts and high-capability parent judgment, not a multi-model panel. The parent checks the actual code and failure paths; agreement among workers is supporting evidence, not a quality guarantee.
+Every reviewer uses one worker tier selected by the active client's runtime policy. Use narrow/Haiku for a local, evidence-limited review; use complex/Sonnet-high for cross-module, debugging, or security-sensitive review that is still independently bounded. Codex uses Luna-max for either tier. This is a single-model reviewer panel within the selected tier, not a multi-model panel. The parent checks the actual code and failure paths; agreement among workers is supporting evidence, not a quality guarantee.
 
 ## Step 1, Determine scope and risk
 
@@ -27,7 +27,7 @@ Write one paragraph describing what the change is intended to accomplish. Derive
 
 ## Step 3, Resolve the reviewer route
 
-Use the active client's worker route and availability checks in the runtime contract for every reviewer. Never silently replace it with another model, lower its effort, or inherit the parent in a new worker. If the exact route is unavailable, perform a parent-only review and name the missing independent coverage. A client or model configuration file is not proof that a reviewer ran.
+Use the active client's worker tier and availability checks in the runtime contract for every reviewer. Never silently replace it with another model, lower its effort, or inherit the parent in a new worker. If the selected tier is unavailable, perform a parent-only review and name the missing independent coverage. A client or model configuration file is not proof that a reviewer ran.
 
 Give every reviewer the same intent, complete diff/file set, repository constraints, and rubric. Keep contexts independent and do not show one reviewer's findings to another before collection. Reviewers are leaves and stay read-only in a shared checkout.
 

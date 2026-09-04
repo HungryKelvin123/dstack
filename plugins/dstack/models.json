@@ -1,10 +1,13 @@
 {
-  "schemaVersion": 3,
-  "description": "DStack delegation policy read by the skills, not executable client configuration. The user-selected parent leads; each client uses its exact native worker route or work stays in the parent.",
+  "schemaVersion": 4,
+  "description": "DStack delegation policy read by the skills, not executable client configuration. The user-selected parent leads; each client selects a native worker tier or work stays in the parent.",
   "orchestrator": {
     "model": "user-selected-parent",
     "reasoningEffort": "highest-supported",
-    "owns": ["planning", "architecture", "difficult-implementation", "worker-review", "integration", "final-verification"]
+    "owns": ["planning", "architecture", "difficult-implementation", "worker-review", "integration", "final-verification"],
+    "preferredByClient": {
+      "claude": ["opus", "fable"]
+    }
   },
   "workers": {
     "codex": {
@@ -13,8 +16,13 @@
       "fallback": "sequential-parent"
     },
     "claude": {
-      "model": "haiku",
-      "effort": "max",
+      "narrow": {
+        "model": "haiku"
+      },
+      "complex": {
+        "model": "sonnet",
+        "effort": "high"
+      },
       "fallback": "sequential-parent"
     }
   },

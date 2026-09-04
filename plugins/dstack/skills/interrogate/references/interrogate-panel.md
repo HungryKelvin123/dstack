@@ -1,6 +1,6 @@
 # Interrogate panel contract
 
-The parent chooses the review budget from [`../../../models.json`](../../../models.json), dispatches independent workers under the shared runtime contract, and judges every finding against the actual code. Each client uses its own native worker policy; record the requested route and served model when observable.
+The parent chooses the review budget from [`../../../models.json`](../../../models.json), selects one worker tier, dispatches independent workers under the shared runtime contract, and judges every finding against the actual code. Each client uses its own native worker policy; record the requested tier, route, and served model when observable.
 
 ## Risk budget
 
@@ -15,15 +15,15 @@ The count is a ceiling for useful reviews, not a minimum charge. Queue any revie
 
 ## Dispatch and judgment
 
-All reviewers use the active client's exact configured worker model and effort. Codex uses Luna-max; Claude Code uses native Haiku-max when supported. Each receives the same filled reviewer prompt, intent, evidence, and rubric in an independent context. This is a single-model reviewer panel within the active client. Do not manufacture diversity with different model labels or claim multi-model coverage because several workers ran.
+All reviewers in a panel use the same selected tier. Use the narrow tier for local, evidence-limited review; use the complex tier for cross-module, debugging, or security-sensitive review that remains independently bounded. Codex maps both tiers to Luna-max. Claude Code maps narrow to native Haiku and complex to native Sonnet-high. Each reviewer receives the same filled prompt, intent, evidence, and rubric in an independent context. This is a single-model reviewer panel within the selected tier. Do not manufacture diversity with different model labels or claim multi-model coverage because several workers ran.
 
 Reviewers are read-only leaves. They do not edit the repository, call external services, change model configuration, delegate, or use Roblox Studio MCP playtest controls. The parent reads all results, verifies the cited failure paths, resolves disagreements, and makes the Act on / Consider / Noted / Dismissed judgment. Interrogate never applies a finding automatically.
 
-If the active client's exact worker route cannot run, use a parent-only review and identify the coverage gap. Do not fill an unavailable reviewer slot by launching a different model. Report incomplete reviews as incomplete.
+If the active client's selected worker tier cannot run, use a parent-only review and identify the coverage gap. Do not fill an unavailable reviewer slot by launching a different model. Report incomplete reviews as incomplete.
 
 ## Receipt fields
 
-Record each reviewer's label, requested model and effort, served identity as observed or unverified, route, completion or dropout, finding count, and whether it saw the complete evidence. Keep these distinctions:
+Record each reviewer's label, requested tier/model/effort, served identity as observed or unverified, route, completion or dropout, finding count, and whether it saw the complete evidence. Keep these distinctions:
 
 - **agreement**: the same concrete issue raised by independent reviewers, with shared-model bias still possible;
 - **lone finding**: one reviewer's issue evaluated on its evidence;
