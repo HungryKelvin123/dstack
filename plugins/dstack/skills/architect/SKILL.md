@@ -7,7 +7,9 @@ description: "Design typed Luau ownership, module boundaries, remotes, state, pe
 
 Design before implementation. This is a design gate, not a reason to expand scope. Read [`../../references/roblox-engineering.md`](../../references/roblox-engineering.md) first. Repository instructions and the current source outrank this skill. Use the contract's Repository mode or Studio fallback mode; never use Roblox Studio MCP playtest controls.
 
-Delegation and optional capabilities follow [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md).
+Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
+
+The selected high-capability parent owns the design, dependency order, and difficult implementation. Delegate source inventories, bounded evidence gathering, routine modules under settled interfaces, and fixtures through the runtime worker policy. Inspect worker artifacts and resolve their questions before accepting a design or implementation unit.
 
 ## Choose the depth
 
@@ -50,7 +52,7 @@ Start with the caller's intended usage. Derive the shape from that usage rather 
 3. Trace one complete request, including validation, authoritative mutation, replication, presentation, cleanup, retry, and failure. State invariants and make illegal states hard to construct.
 4. State mobile CPU/memory, replication, remote-frequency, physics, render, and instance-volume costs. Prefer event-driven and bounded work; name what must be measured rather than guessing.
 5. For a Load-bearing or genuinely ambiguous decision, produce at least two structurally distinct candidates. Compare them on ownership clarity, interface depth, security, lifecycle behavior, performance, migration cost, and implementation risk. Compare whole shapes, not point fixes inside one shape. Read [`references/design-red-flags.md`](references/design-red-flags.md) while screening candidates.
-6. Use `$arena` only when the user requests competing or parallel designs, or when independent isolated candidates are clearly worth the token cost and the user has authorized parallel agents. If it runs, read [`references/runner-prompt.md`](references/runner-prompt.md), require each candidate's rationale from [`references/rationale-template.md`](references/rationale-template.md), and record the synthesis, grafts, rejections, dropouts, and verification. Never run it for a Local change.
+6. Use `$arena` only when the user requests a candidate comparison and independent evidence or bounded prototypes can justify the cost. Permission for routine workers is not a request for parallel planning. The parent defines the alternatives and retains the design decision. If it runs, read [`references/runner-prompt.md`](references/runner-prompt.md), require each candidate's rationale from [`references/rationale-template.md`](references/rationale-template.md), and record the synthesis, grafts, rejections, dropouts, and verification. Never run it for a Local change.
 7. Prefer the viable design that hides more complexity behind the smallest stable public surface. Recommend one and state the tradeoff; do not enumerate alternatives that do not change a load-bearing decision.
 
 **Sketch is complete when:** another engineer can implement the requested behavior without inventing ownership, types, module boundaries, remote contracts, lifecycle rules, persistence behavior, or verification steps.

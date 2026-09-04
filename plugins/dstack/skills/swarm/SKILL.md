@@ -1,13 +1,13 @@
 ---
 name: swarm
-description: "Fan out N parallel workers, drain them, and return one report. Use for $swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration."
+description: "Coordinate independent routine execution or exploration batches and return one reviewed report. Use for $swarm or large separable work that justifies parallel overhead."
 ---
 
 # Swarm
 
-Delegation and optional capabilities follow `../david-mode/references/agent-runtime.md`.
+Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
 
-Fan out N isolated workers. They may cover separate slices, race the same brief, or mix both. The parent waits, aggregates, and returns one report. If subagents or safe isolation are unavailable, use the declared sequential-parent or partial-result fallback.
+Coordinate isolated workers for routine batches whose interfaces and acceptance criteria the parent has decided. Prefer distinct slices; duplicate attempts require an explicit comparison request. The parent plans the work, handles difficult implementation, reviews results, and returns one report. Use the runtime contract's exact worker pair and fallback for every worker.
 
 ## Start
 
@@ -20,15 +20,15 @@ Open a todolist with one entry per phase before launching anything.
 
 ## Phase A: Frame
 
-1. State the done predicate and the artifact or report the swarm must return.
-2. Choose the shape. Partition into slices, race N workers on identical briefs, or mix both. For a race or mixed shape, declare `first pass`, `rank all`, or `best-of` before spawning.
-3. Set N from the user or derive it from the shape. Cap N at observable runtime capacity. Queue excess lanes; never drop them silently.
-4. Pick the worker model from `swarm workers` in the installed dstack model profiles when present. Otherwise use the configured fast profile. For a model race, name each arm's model up front.
-5. Give each worker its own writable output when it writes. Use a worktree, branch, or `/tmp1-<slug>/worker-<n>/`.
+1. State the done predicate and expected artifacts. Apply the runtime's context and overhead gates before choosing workers.
+2. Partition into independent execution or exploration slices. Keep prerequisite work sequential; new filenames do not remove dependencies. For an explicitly requested race, declare `first pass`, `rank all`, or `best-of` before spawning.
+3. Set N from the number of useful independent batches. Apply the runtime concurrency limit and queue excess work; never drop it silently.
+4. Resolve the exact worker model and effort from the runtime contract. A race compares attempts using that same pair; it does not select additional models.
+5. Give each worker exclusive files, a separate worktree, or a separate output directory. Keep architectural decisions and difficult boundary code assigned to the parent.
 
 ## Phase B: Fan out
 
-After proving independent reads or isolated writes, dispatch all ready workers together through supported subagent tools. Use an installed role profile when validated; otherwise use generic agents with inherited model pairs. A worker that needs local devices or live-control capabilities stays on the surface that provides them. For a non-default base, create or select the exact worktree or branch before dispatch and name it in the brief.
+After proving independent reads or isolated writes, dispatch ready workers within the runtime limit. Every worker is a leaf using the exact configured pair. Work requiring unavailable tools stays with the parent. For a non-default base, create or select the exact worktree before dispatch and name it in the brief.
 
 Every brief stands alone. Include the goal, scope, exact slice or race arm, how to verify, and what to report. Reports use `PASS`, `ISSUES`, or `BLOCKED` with evidence.
 
@@ -36,7 +36,7 @@ If a worker drops out, reconcile its partial state and make one bounded retry wh
 
 ## Phase C: Aggregate
 
-Read the terminal results. For coverage, every required slice needs a result. For a race, apply the selection rule declared up front. Use first pass, rank all, or best-of. Do not paste raw worker dumps.
+Inspect each result's diff or source evidence and run the relevant check before accepting it. Apply the runtime correction limit and take over difficult or repeatedly failing work. For coverage, every required slice needs a result. For a race, apply the declared selection rule only to verified attempts. Do not paste raw worker dumps.
 
 Keep a compact result table, one-line evidenced issues, and explicit gaps or dropouts.
 

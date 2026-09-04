@@ -24,8 +24,8 @@ Check the installed plugin's manifest and canonical `skills/` tree. Confirm:
 
 1. `david-mode` is explicit and is the entry point for non-trivial Roblox work.
 2. `unslop` is the only implicitly invoked skill.
-3. Other skills remain explicit; setup must not make broad review, arena, swarm, or interrogation automatic.
-4. The Claude manifest points at the shared skills, agents, and Claude hook file, while the Codex manifest points at the same skills and keeps the Codex hook file.
+3. Other skills remain explicit in the catalog. David Mode may route eligible routine batches under its runtime contract; setup does not enable blanket delegation or review.
+4. The Claude and Codex manifests point at the same skills and their respective hook files. No bundled worker profile may bypass the shared model policy.
 
 If the installed tree has duplicate copies, use the client's normal uninstall/update flow and reinstall one marketplace entry. Do not edit a cache directory by hand.
 
@@ -63,18 +63,17 @@ Use the connection check only when the active client exposes the Roblox Studio M
 
 Never infer that MCP is uninstalled merely because no Studio is connected. Never install a guessed command or overwrite a client configuration. **Do not launch, start, stop, simulate, or control a Roblox Studio playtest.**
 
-## 5. Validate reviewer lanes
+## 5. Validate parent and worker routing
 
-Read `models.json` as a recommendation, not proof that a model is available. For an ordinary setup check, inspect the model and agent metadata without spending model calls. Probe lanes only when the user explicitly asks to configure or verify multi-model review:
+Read [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md) before checking delegation. `models.json` is instruction metadata, not executable client configuration or proof of model availability. For an ordinary setup check, inspect advertised capabilities without spending model calls. Probe a worker only when the user explicitly asks to verify worker execution.
 
-- Claude's default panel is the shipped `interrogate-haiku`, `interrogate-sonnet`, and `interrogate-opus` agents.
-- Codex may use the advertised `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna` overrides when the active host supports them.
+Confirm that the user's chosen parent retains planning, difficult implementation, review, and integration. Check whether the client supports the requested parent effort and the exact `worker` model and effort. Missing worker controls mean sequential parent execution, including on clients whose native workers cannot use that pair. Do not install an unrequested model bridge or change global model settings.
 
-Use the smallest panel that matches the risk: one lane for a local change, two for a cross-module change, three for security/data/monetization or other high-risk boundaries, and four only for a critical change or an explicit request. A failed or unavailable lane is recorded as skipped or unverified; it is never silently replaced by a weaker model or mislabeled as a different model. `interrogate` never auto-applies findings.
+Validate the policy's concurrency, revision, and leaf-worker limits. For an Interrogate panel, read [its panel contract](../interrogate/references/interrogate-panel.md) and use `riskPolicy`; independent contexts share one worker model and do not provide model diversity. Record requested settings separately from observed execution. `interrogate` never auto-applies findings.
 
 ## 6. Smoke and report
 
-Run a structural smoke check appropriate to the client. Confirm the plugin namespace, the setup skill, the David Mode skill, the automatic `unslop` rule, the reviewer panel metadata, and the non-playtest boundary. Do not claim runtime success from a file listing alone.
+Run a structural smoke check appropriate to the client. Confirm the plugin namespace, the setup skill, the David Mode skill, the automatic `unslop` rule, the parent/worker policy, and the non-playtest boundary. Do not claim runtime success from a file listing alone.
 
 Report:
 

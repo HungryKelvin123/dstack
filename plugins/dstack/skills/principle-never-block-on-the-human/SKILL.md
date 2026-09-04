@@ -18,5 +18,5 @@ The human supervises asynchronously. Agents must stay unblocked: make reasonable
 
 **Boundaries:**
 - **Irreversible actions** (force-push, delete production data, send external messages) still require confirmation.
-- **Reversible actions** (write code, edit notes, split tasks) should proceed without blocking.
+- **In-scope reversible actions** such as requested code edits, notes, and internal work breakdowns can proceed. Delegation follows [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md); creating a separate user-owned task still requires an explicit request.
 - **Product direction** comes from the human; *execution* should not block.

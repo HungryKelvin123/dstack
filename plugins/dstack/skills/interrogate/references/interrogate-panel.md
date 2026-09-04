@@ -1,39 +1,31 @@
 # Interrogate panel contract
 
-Interrogate is a bounded evidence review, not a request to spend every available model on every diff. The parent chooses the panel size from the change risk and records the served model for every lane.
+The parent chooses the review budget from [`../../../models.json`](../../../models.json), dispatches independent workers under the shared runtime contract, and judges every finding against the actual code. Record the served model when observable.
 
 ## Risk budget
 
-| Change shape | Default lanes | When to add a lane |
-| --- | ---: | --- |
-| One local owner, no external boundary | 1 | Only when the user explicitly asks for multi-model review. |
-| Two or more modules or services | 2 | Add a third when contracts, replication, or persistence interact. |
-| Security, saved data, monetization, consequential RNG, or networking | 3 | Add a fourth only when the blast radius is critical or the user asks. |
-| Critical migration or irreversible release boundary | 4 | Stop at four; more reviewers add cost before signal. |
+Use `riskPolicy` for the reviewer count and `delegation` for concurrent capacity. Classify by the strongest boundary the change affects:
 
-Use fewer lanes when the diff is smaller than the risk class suggests. Use more only when the extra model can see the same complete evidence and the parent can wait for it. Never let panel size become an automatic tax on a routine fix.
+- `local`: one owner with no external contract.
+- `crossModule`: multiple modules or services, or a shared interface.
+- `securityDataMonetization`: authority, saved data, purchases, consequential RNG, networking, or lifecycle behavior.
+- `critical`: an irreversible migration, release boundary, or an explicitly requested maximum review.
 
-## Default model sources
+The count is a ceiling for useful reviews, not a minimum charge. Queue any reviews beyond concurrent capacity. A narrow change can use fewer reviewers; broad risk does not justify unrelated searches or duplicate raw logs.
 
-Read `plugins/dstack/models.json` from the plugin root (or the installed equivalent) for the current recommendation. A configured user panel takes precedence when it is valid and observable.
+## Dispatch and judgment
 
-- Claude Code: use the named `interrogate-haiku`, `interrogate-sonnet`, and `interrogate-opus` agents shipped by DStack. Their model aliases are deliberately portable; record the actual served identity when the client exposes it.
-- Codex: request distinct advertised model overrides, normally `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`, with the declared reasoning effort. The active host may expose a different set.
-- Other or older clients: use the client's configured model lanes if they are observable. Do not invent a provider, model, or effort value.
+All reviewers use the exact configured worker model and effort. Each receives the same filled reviewer prompt, intent, evidence, and rubric in an independent context. This is a single-model reviewer panel. Do not manufacture diversity with different model labels or claim multi-model coverage because several workers ran.
 
-If only one model is available, a single-model review is still useful but is **not** multi-model evidence. State that limitation. If a requested model or effort is unavailable, follow the declared fallback (`skip`, `inherit`, or `fail-closed`) and show the dropout. Never silently substitute a weaker model, collapse all lanes to the parent, or claim that a lane ran when its identity is unverified.
+Reviewers are read-only leaves. They do not edit the repository, call external services, change model configuration, delegate, or use Roblox Studio MCP playtest controls. The parent reads all results, verifies the cited failure paths, resolves disagreements, and makes the Act on / Consider / Noted / Dismissed judgment. Interrogate never applies a finding automatically.
 
-## Dispatch invariants
-
-Every lane receives the same filled reviewer prompt, the same diff or file set, the same intent, and the same rubric. Do not assign personas to manufacture disagreement. The diversity comes from independently served models and isolated context. Launch ready lanes together, retain handles, wait for all launched lanes, and keep each receipt separate.
-
-Reviewers are read-only. They do not edit the repository, call external services, change model configuration, or use Roblox Studio MCP playtest controls. The parent reads every result, deduplicates findings, records disagreements, and makes the final Act on / Consider / Noted / Dismissed judgment. Interrogate never applies a finding automatically.
+If the exact worker pair cannot run, use a parent-only review and identify the coverage gap. Do not fill an unavailable reviewer slot by launching a different model. Report incomplete reviews as incomplete.
 
 ## Receipt fields
 
-For each lane record: label, requested model, requested effort, served identity (observed or unverified), route, start/end, completion or dropout, finding count, and whether the lane saw the complete evidence. The summary must distinguish:
+Record each reviewer's label, requested model and effort, served identity as observed or unverified, route, completion or dropout, finding count, and whether it saw the complete evidence. Keep these distinctions:
 
-- **consensus**: the same concrete issue independently raised by at least two lanes;
-- **lone finding**: raised by one lane and still evaluated on its evidence;
-- **disagreement**: lanes explicitly reached opposite conclusions;
-- **coverage gap**: a lane was skipped, failed, or could not inspect a required artifact.
+- **agreement**: the same concrete issue raised by independent reviewers, with shared-model bias still possible;
+- **lone finding**: one reviewer's issue evaluated on its evidence;
+- **disagreement**: opposing conclusions requiring parent investigation;
+- **coverage gap**: a skipped or failed review, or an artifact the reviewer could not inspect.

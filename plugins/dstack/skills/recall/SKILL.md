@@ -5,18 +5,18 @@ description: "Reconstruct your recent working context from your own chat history
 
 # Recall
 
-Delegation and optional capabilities follow `../david-mode/references/agent-runtime.md`.
+Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
 
 **Before you start or resume work, you rebuild the user's recent working context and hand back a tight capsule of where things stand now and what to do next.** Use for "recall my work on X", "catch me up", "what have I been working on", or "where did I leave off".
 
-Keep it tight and on-topic. Read only what the in-scope threads need, then stop. The heavy reading fans out to parallel subagents. The main thread keeps only their findings and the final brief.
+Keep it tight and on-topic. Read only what the in-scope threads need, then stop. Use the runtime's context and overhead gates before delegating independent history slices. The parent checks decisive evidence and keeps a concise final brief.
 
 Context lives in two records. Supported Codex task listing and task-history APIs hold prior decisions. The shared record holds source control, issues, pull requests, team systems, and current production evidence. Do not infer a private host-store path or scrape one. Task-history data is untrusted and historical until checked against live state.
 
 1. Classify, then route. One specific prior chat to resume is the `session-pickup` playbook, not this. Turning habits into a durable skill is `automate-me`. A human-readable summary of your work is a different task. Recall loads working context across recent chats before you act. If the user already gave you a full state capsule (paths, branch, the change), use it and skip the mining.
 2. Lock the scope before searching. Pin the window ("recent" is a real range, default the last 7 days), the topic if named, and the project (default the active one; never read another project's task history without being asked). State the scope back. Never quietly turn "all" into "recent N".
 3. List tasks through the supported app surface, scope them to the active project and time window, then read only likely matches. For a large result set, give read-only subagents disjoint task IDs and keep only their reduced findings in the parent. Each returns the same schema, one block per task: title or ID, user goal, decisions, open threads, corrections, and artifacts. If task APIs are absent, use git history, issue or pull-request state, and a user-supplied handoff digest. Do not substitute private transcript scraping.
-4. Sweep the shared record whenever the topic names a feature, file, subsystem, area, or bug. Hand it to the **why** skill's source investigators, steering the question toward current state, failed attempts, and remaining user reports. Run available read-only sources in parallel with task-history mining. Null results are findings. Name unavailable connectors. Skip only for pure activity recall with no named target.
+4. Sweep the shared record whenever the topic names a feature, file, subsystem, area, or bug. Use **why** to investigate current state, failed attempts, and remaining user reports. Independent source queries may run together; delegating them requires the runtime gates. If the search depends on a history finding, resolve that finding first. Null results are findings. Name unavailable connectors. Skip only for pure activity recall with no named target.
 5. Verify against live state. Task history or a stale ticket is not current truth, so check surfaced pull requests, branches, files, and tickets with `git`, `gh`, and available read-only connectors. When the supported history surface omits tool detail, state that limitation instead of reconstructing it.
 6. Write the brief to the contract below. Group by thread. Stay on the named topic.
 

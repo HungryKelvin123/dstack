@@ -5,7 +5,7 @@ description: "Use for \"automate me\", \"create/update/refresh my -mode skill\",
 
 # Automate me
 
-Delegation and optional capabilities follow `../david-mode/references/agent-runtime.md`.
+Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
 
 A guided flow for turning the user's working conventions into a skill agents will follow. The output is one `-mode` skill tailored to them (e.g. `jay-mode`, `priya-mode`).
 
@@ -29,7 +29,7 @@ Update mode changes the rest of the flow:
 
 List recent tasks through supported Codex task APIs and scope them to the active project. Never infer or search a private history directory. If task APIs are unavailable, ask the user for a history digest or skip mining and state the limitation.
 
-Survey recent conversations within that scope for recurring patterns. For a large set, assign read-only subagents disjoint task IDs after proving their isolation. Each returns a short structured list of patterns with task identifiers as evidence. If agents are unavailable, inspect sequentially in the parent.
+Survey recent conversations within that scope for recurring patterns. If independent history slices pass the runtime's context and overhead gates, assign read-only workers disjoint task IDs. Each returns a short structured list of patterns with task identifiers as evidence. Otherwise inspect sequentially in the parent.
 
 - Response preferences (length, tone, format, "dumb it down" corrections)
 - Delegation habits (subagents, models, specialized workflows, parallelism)

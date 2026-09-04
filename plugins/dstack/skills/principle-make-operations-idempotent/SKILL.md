@@ -13,7 +13,7 @@ Design operations so they converge to the correct state regardless of how many t
 - Convergent startup: scan for existing state, clean stale artifacts, adopt live sessions
 - Content-based cleanup: compare by content equivalence, not creation order
 - Self-healing locks: use PID-based stale lock detection
-- Idempotent scheduling: failed work respawns cleanly, fresh input regenerated after each cycle
+- Idempotent scheduling: reconcile partial state before a bounded retry with fresh input. For delegated work, the parent applies the retry limits in [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md).
 
 **The test:**
 1. What happens if this runs twice in a row?

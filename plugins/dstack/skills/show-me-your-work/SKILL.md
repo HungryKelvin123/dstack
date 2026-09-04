@@ -5,7 +5,7 @@ description: "Keep a reviewable decision trail for long-running or unattended wo
 
 # Show me your work
 
-Delegation and optional capabilities follow `../david-mode/references/agent-runtime.md`.
+Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
 
 For work a human reviews after the fact, a decision trail lets them reconstruct what was decided, why, and on what evidence, without rerunning the work or reading the whole task history. Keep one canonical log so the trail is consistent and a future agent can find it.
 
@@ -63,16 +63,16 @@ At the end of the run, check the log against the current task through supported 
 
 Fix the log, not the story. If the work diverged from what a row claims, the row is wrong.
 
-## Cross-model review of the trail
+## Independent review of the trail
 
-Before handing back, request an independent review through an installed profile with a different observable model family when available. Otherwise use a generic independent agent and label the model pair inherited or unverified. If independent agents are unavailable, fail closed on claiming cross-model review and report that limitation. The reviewer reads the audit trail and supported task history or digest, then flags what the user should inspect.
+Before handing back, request one read-only review using the runtime contract's exact worker pair. If unavailable, the parent audits directly and labels the review parent-only. Record the requested and observed settings accurately. The worker reads the audit trail and supported task history or digest, then flags what the parent must check:
 
 - Decisions logged with weak or absent evidence.
 - Verification steps skipped or claimed without proof in task history, receipts, or live state.
 - Choices that look risky in hindsight (premature, scope-creeping, papering over a symptom).
 - Gaps the user would otherwise miss on a casual skim.
 
-Every reply for a run that produced a trail ends with an "Attention" section. Lead with the reviewer's model on its own line (`reviewed by <model>`), then list each flag pointing to specific rows or moments. "No flags" is a valid value; the model name is not. The self-audit asks if the log told the truth; this asks what the user should still scrutinize even when it did.
+The parent verifies the flags against actual artifacts and corrects the log or work before handing back. The final reply for a run with a trail includes an "Attention" section naming the reviewer settings as observed or unverified, or `parent-only` when no worker ran. List remaining flags by row or moment; `no flags` is valid after verification. Never invent a reviewer identity.
 
 ## Reviewing the trail
 

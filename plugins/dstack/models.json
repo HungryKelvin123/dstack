@@ -1,51 +1,26 @@
 {
-  "schemaVersion": 1,
-  "description": "Optional reviewer lanes. Interrogate uses only lanes the active client can actually serve and records every skipped or unverified lane.",
+  "schemaVersion": 2,
+  "description": "DStack delegation policy read by the skills, not executable client configuration. The user-selected parent leads; every subagent uses the exact worker pair or work stays in the parent.",
+  "orchestrator": {
+    "model": "user-selected-parent",
+    "reasoningEffort": "highest-supported",
+    "owns": ["planning", "architecture", "difficult-implementation", "worker-review", "integration", "final-verification"]
+  },
+  "worker": {
+    "model": "gpt-5.6-luna",
+    "reasoningEffort": "max",
+    "fallback": "sequential-parent"
+  },
+  "delegation": {
+    "defaultMaxConcurrentWorkers": 2,
+    "maxConcurrentWorkers": 3,
+    "maxWorkerRevisions": 1,
+    "allowNestedDelegation": false
+  },
   "riskPolicy": {
     "local": 1,
     "crossModule": 2,
     "securityDataMonetization": 3,
     "critical": 4
-  },
-  "claude": {
-    "interrogateReviewers": [
-      {
-        "id": "haiku",
-        "agent": "interrogate-haiku",
-        "model": "haiku",
-        "effort": "medium"
-      },
-      {
-        "id": "sonnet",
-        "agent": "interrogate-sonnet",
-        "model": "sonnet",
-        "effort": "high"
-      },
-      {
-        "id": "opus",
-        "agent": "interrogate-opus",
-        "model": "opus",
-        "effort": "high"
-      }
-    ]
-  },
-  "codex": {
-    "interrogateReviewers": [
-      {
-        "id": "sol",
-        "model": "gpt-5.6-sol",
-        "reasoningEffort": "high"
-      },
-      {
-        "id": "terra",
-        "model": "gpt-5.6-terra",
-        "reasoningEffort": "high"
-      },
-      {
-        "id": "luna",
-        "model": "gpt-5.6-luna",
-        "reasoningEffort": "medium"
-      }
-    ]
   }
 }

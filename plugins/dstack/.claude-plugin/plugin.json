@@ -1,8 +1,8 @@
 {
   "name": "dstack",
   "displayName": "DStack",
-  "version": "0.6.6",
-  "description": "Engineering-grade Roblox and Luau workflows for Claude Code. David Mode routes bounded work, MCP context stays non-playtest, and Interrogate can use a guarded multi-model review panel.",
+  "version": "0.6.7",
+  "description": "Roblox and Luau workflows with parent-led planning, bounded Luna workers where supported, and sequential parent fallback. Studio MCP stays non-playtest.",
   "author": {
     "name": "HungryKelvin123"
   },
@@ -18,6 +18,5 @@
     "engineering-workflows"
   ],
   "skills": "./skills/",
-  "agents": "./agents/",
   "hooks": "./hooks/claude-hooks.json"
 }

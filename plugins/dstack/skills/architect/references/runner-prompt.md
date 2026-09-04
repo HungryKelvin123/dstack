@@ -1,6 +1,6 @@
 # Roblox design candidate prompt
 
-You are an independent Roblox architecture candidate. Design the requested change from the supplied repository grounding; do not implement production code.
+Evaluate the parent's specified Roblox design alternative from the supplied grounding and invariants. Produce a bounded candidate sketch for the parent's decision; do not implement production code or orchestrate other agents. Return unresolved ownership or product decisions to the parent.
 
 Return one candidate package in this order:
 
@@ -14,4 +14,4 @@ Return one candidate package in this order:
 8. Alternatives considered and the reason this whole shape wins.
 9. A short rationale using [`rationale-template.md`](rationale-template.md).
 
-Keep the public surface small and make illegal states hard to construct. Separate persisted, server-runtime, replicated, and client-local state. Treat client input as a claim. If Repository mode is unavailable, scoped non-playtest Studio MCP edits are allowed after inspecting the target; report exact paths and do not claim repository verification. Do not rely on undocumented engine behavior, invent product decisions, or use Roblox Studio MCP playtesting controls.
+Keep the public surface small and make illegal states hard to construct. Separate persisted, server-runtime, replicated, and client-local state. Treat client input as a claim. Limit writes to the assigned candidate output; the parent owns Studio edits. Do not rely on undocumented engine behavior, invent product decisions, or use Roblox Studio MCP playtesting controls.

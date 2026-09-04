@@ -12,7 +12,7 @@ have fun coding!
 
 ## what dstack is
 
-dstack is a plugin for Claude Code and Codex. it is not a model or a hosted service. it supplies one shared Roblox/Luau skill tree, focused playbooks, optional read-only reviewer agents, client-specific manifests, and guarded hooks.
+dstack is a plugin for Claude Code and Codex. it is not a model or a hosted service. it supplies one shared Roblox/Luau skill tree, focused playbooks, a parent/worker policy, client-specific manifests, and guarded hooks.
 
 the repository uses the same distribution shape as mature multi-client plugins:
 
@@ -24,9 +24,8 @@ the repository uses the same distribution shape as mature multi-client plugins:
     ├── .claude-plugin/plugin.json
     ├── .codex-plugin/plugin.json
     ├── .codex-plugin/prompts/             # explicit Codex prompt shims
-    ├── agents/                            # Claude read-only reviewer lanes
     ├── hooks/                             # separate Claude and Codex hook configs
-    ├── models.json                        # bounded reviewer recommendations
+    ├── models.json                        # parent/worker model policy and limits
     ├── references/                        # shared Roblox contracts
     └── skills/                            # one shared skill tree
 ```
@@ -109,7 +108,25 @@ Codex:
 $david-mode Trace why this remote can award a reward twice, fix the root cause, and give me the exact Studio checks to run.
 ```
 
-David Mode reads repository instructions and source first, chooses the smallest Roblox playbook, routes to focused skills only when needed, runs local checks such as `rojo build`, and reports what you must test in Studio. For a narrow request, invoke one focused skill directly instead of paying for the full router. `unslop` is the only automatically invoked skill; all other dstack skills are explicit.
+David Mode reads repository instructions and source first, chooses the smallest Roblox playbook, routes to focused skills only when needed, runs local checks such as `rojo build`, and reports what you must test in Studio. For a narrow request, invoke one focused skill directly instead of paying for the full router. `unslop` is the only implicitly loaded skill. The other skills stay explicit in the catalog, but David Mode can call the ones its workflow needs.
+
+## planning and workers
+
+your selected high-capability model, such as Sol, is the parent. it plans in order: architecture, module contracts, then execution tasks. it writes the difficult code, reviews every worker's actual changes, requests corrections, and owns integration and final checks. choose the highest reasoning effort your parent model supports for large work. dstack cannot change a running model's settings just by saying so.
+
+every subagent uses `gpt-5.6-luna` at `max` reasoning effort. that includes searchers, implementers, reviewers, and judges. workers do not spawn more workers. there is no alternate worker model pool.
+
+David Mode can delegate routine work without you separately invoking Swarm, but only when it earns the overhead:
+
+- if the task and its evidence fit cleanly in one context, keep it in the parent by default. more agents can increase total tokens through repeated context and review.
+- split independent execution or exploratory questions, not dependent planning. one worker must not need another's intermediate results. different files alone do not make work independent.
+- a single worker can handle a self-contained, high-volume routine batch. tiny edits stay in the parent, and a reliable script beats agents repeating mechanical work.
+- start with at most two concurrent workers, with a cap of three. add the third only when earlier output justifies the coordination cost. fewer is fine; queue the rest.
+- hand off named files, diffs, tests, and settled interfaces. the parent verifies them before releasing a dependent batch. workers get distinct ownership, not the same broad job.
+
+hard architecture, new security or data contracts, and other uncertain code stay with the parent. routine code inside a settled contract can go to Luna even when the surrounding update matters a lot.
+
+[`models.json`](./plugins/dstack/models.json) and the [runtime contract](./plugins/dstack/skills/david-mode/references/agent-runtime.md) define this policy. they are instructions, not a model-routing service. if the client cannot request the exact worker model and effort, the parent continues sequentially and reports the limitation. Claude Code still uses the shared skills and hooks, but native Claude worker aliases are not Luna substitutes; delegation needs an already-supported route to the exact pair. dstack does not install a bridge for you.
 
 ## skills
 
@@ -131,8 +148,8 @@ David Mode reads repository instructions and source first, chooses the smallest 
 | [`roblox-ui`](./plugins/dstack/skills/roblox-ui/SKILL.md) | build responsive touch, keyboard, mouse, and gamepad interfaces. |
 | [`roblox-physics`](./plugins/dstack/skills/roblox-physics/SKILL.md) | design assemblies, constraints, collision, hit detection, and network ownership. |
 | [`arena`](./plugins/dstack/skills/arena/SKILL.md) | compare independent attempts at the same bounded problem. |
-| [`swarm`](./plugins/dstack/skills/swarm/SKILL.md) | split independent implementation slices when the user requests parallel work. |
-| [`interrogate`](./plugins/dstack/skills/interrogate/SKILL.md) | run a risk-budgeted adversarial review with independent read-only model lanes. |
+| [`swarm`](./plugins/dstack/skills/swarm/SKILL.md) | coordinate independent routine batches when parallel work earns its overhead. |
+| [`interrogate`](./plugins/dstack/skills/interrogate/SKILL.md) | run bounded, independent read-only worker reviews with parent judgment. |
 | [`tdd`](./plugins/dstack/skills/tdd/SKILL.md) | write a cheap deterministic regression test before a fix. |
 | [`no-comments`](./plugins/dstack/skills/no-comments/SKILL.md) | remove narrating comments while preserving real constraints. |
 | [`create-verification-skill`](./plugins/dstack/skills/create-verification-skill/SKILL.md) | create a reusable verification skill for a Roblox repository. |
@@ -150,16 +167,16 @@ David Mode also reads the small `principle-*` skills only when their rule fits t
 
 ## Interrogate and model use
 
-The old Interrogate wording implied a configured panel but did not guarantee that the client actually served different models. The current skill makes that distinction explicit:
+Interrogate uses independent Luna-`max` contexts and a parent review. it is not a multi-model panel, and agreement between reviewers is not proof of correctness. its reviewer budgets are ceilings, not minimums:
 
 - one reviewer for a local change;
 - two for a cross-module change;
 - three for security, saved data, monetization, consequential RNG, networking, or lifecycle boundaries;
 - four only for a critical or explicitly maximum review.
 
-Claude uses the bundled read-only `haiku`, `sonnet`, and `opus` reviewer agents when those model aliases are available. Codex requests distinct advertised model overrides (`gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna`) when the active host supports them. Other clients use only observable configured lanes. A missing, failed, or unverified lane is reported; it is never silently replaced or counted as model diversity. All reviewers receive the same evidence and rubric, and Interrogate never applies their findings automatically. See [`models.json`](./plugins/dstack/models.json) and the [panel contract](./plugins/dstack/skills/interrogate/references/interrogate-panel.md).
+reviewers above the concurrency limit queue until a slot opens. all receive the same evidence and rubric. the parent verifies their findings against the code and resolves disagreements. missing or unverified reviews are reported; a parent-only fallback is never presented as independent coverage. Interrogate does not apply fixes automatically. See the [panel contract](./plugins/dstack/skills/interrogate/references/interrogate-panel.md).
 
-Every model run costs its own allowance. Use Interrogate when independent challenge is worth that cost; use `blast-radius` or a focused skill for a routine change. Arena and Swarm remain explicit and are not called by setup automatically.
+every model run costs its own allowance. use Interrogate when independent challenge is worth that cost; use `blast-radius` or a focused skill for a routine change. Arena remains an explicitly requested comparison, not parallel planning by default. setup does not enable blanket worker fan-out.
 
 ## Roblox Studio MCP boundary
 
@@ -209,7 +226,7 @@ Run the repository checks from the root:
 node --test tests/*.test.mjs
 ```
 
-The tests verify the nested marketplace structure, both manifests, prompt shims, internal links, invocation policy, David Mode state, the missing-versus-closed MCP setup gate, the reviewer model-diversity contract, and the permanent Studio no-playtest boundary.
+The tests check the nested marketplace structure, both manifests, prompt shims, internal links, invocation policy, David Mode state, the missing-versus-closed MCP setup gate, the shared worker policy, and the permanent Studio no-playtest boundary. Policy checks do not prove that a client actually served a requested model or effort.
 
 ## origin and license
 

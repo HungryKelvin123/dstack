@@ -46,11 +46,19 @@ For work with more than one action, keep a compact checklist in working notes. D
 Mark an inapplicable phase as `skip` with a reason rather than silently losing it. Do not narrate every checklist item. A phase is complete only when its criterion is met:
 
 - **Ground**: the relevant entry point, source paths, constraints, owner, state, lifecycle, and missing facts are known.
-- **Route**: the narrowest playbook and no more than two principle skills are selected.
+- **Route**: the narrowest playbook and no more than two principle skills are selected; large tasks have a dependency order and a justified parent-only or delegated execution choice.
 - **Shape**: the caller usage, types, boundary, failure path, and verification target are concrete enough to implement without inventing structure.
 - **Implement**: the smallest complete vertical slice is present, or the request was design-only.
 - **Verify**: changed files and the relevant proof are inspected, with any Studio-only check handed to the user.
 - **Report**: the outcome, evidence, remaining risk, and next user action are clear.
+
+## Orchestrate large tasks
+
+Apply the model, effort, capacity, and fallback rules in [`references/agent-runtime.md`](references/agent-runtime.md). The user's selected high-capability parent plans deeply, coordinates workers, reviews their code, and writes the difficult sections.
+
+Plan sequentially before dividing execution. Default to parent-only when the task fits cleanly in one context. Apply the runtime's independence and overhead gates to any delegation, including its single-worker option for a self-contained routine batch. Source discovery, caller inventories, repetitive changes, routine code inside settled interfaces, and test fixtures are candidates. Eligible batches can be delegated without a separate Swarm request. Keep ambiguous architecture and difficult boundary code with the parent.
+
+Give each worker exact file ownership and a checkable result. Review the actual artifacts before accepting work or releasing a dependent batch. Send precise corrections or take over if the work becomes difficult. Use `$swarm` only when several eligible slices need its queue and aggregate report; basic delegation does not require a heavy skill.
 
 ## Ground before deciding
 
@@ -104,8 +112,8 @@ For broad or load-bearing work, invoke `$architect` under its depth gate. It mus
 
 Heavy skills are escalation paths, not default ceremony:
 
-- `$arena` is for a genuine design bakeoff with isolated candidates, a gradeable rubric, and a synthesis decision. `$arena` and `$swarm` stay explicit for ordinary work. Never call them for a small fix or a single design. Never run arena for a Local change.
-- `$swarm` is for independently bounded coverage, exploration, or implementation slices. Use it only when the user requests parallel work or has authorized it and write isolation is proven. Never fan out shared mutable writes.
+- `$arena` is for a requested design bakeoff with isolated candidates, a gradeable rubric, and a parent synthesis decision. Keep it explicit for ordinary work and skip it for a Local change.
+- `$swarm` is for several independent coverage, exploration, or routine implementation slices that pass the runtime's context and overhead gates, or an explicit parallel-work request. Prove independence and write isolation first. Never fan out shared mutable writes or sequential dependencies.
 - `$interrogate` is for a contested or high-risk design, or an explicit adversarial review. Do not spend multi-reviewer tokens on a settled local fix.
 - `$show-me-your-work` is for long, autonomous, unattended, or otherwise auditable work. Keep its trail local unless a future reviewer needs it committed.
 - `playbooks/prototype.md` is disposable and local. Delete or isolate its output before production implementation.
@@ -114,7 +122,7 @@ If a heavy capability is unavailable, use the runtime contract's declared sequen
 
 ## Implement in verifiable units
 
-- Build the smallest complete vertical slice. End each unit with the narrowest relevant check before starting the next.
+- Build the smallest complete vertical slice. The parent writes difficult code and reviews every delegated batch before integrating it. End each unit with the narrowest relevant check before starting the next.
 - Surface a new owner, parameter, cast, optional field, escape hatch, pass-through call, or cross-boundary shortcut immediately. It may mean the shape is wrong, the requirement is missing, or the implementation is overreaching.
 - Prefer deletion and bounded work over extra layers, polling, broad scans, unbounded tables, remote chatter, duplicate connections, or speculative pooling.
 - For debugging, trace symptoms to root causes and add a cheap deterministic regression check when one exists. Do not hide a symptom behind a guard.

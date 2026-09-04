@@ -1,13 +1,13 @@
 ---
 name: interrogate
-description: "Use for \"interrogate\", \"adversarial review\", \"multi-model review\", \"challenge this\", \"stress test this code\", \"find blind spots\", or \"tear this apart\". Independent read-only reviewers challenge risky Roblox changes through the same evidence and rubric."
+description: "Challenge risky Roblox code or designs with bounded, independent read-only worker reviews and parent judgment. Use for $interrogate, adversarial review, or finding blind spots."
 ---
 
 # Interrogate
 
 Interrogate is a bounded adversarial review. It does not implement fixes, does not auto-apply findings, and never uses Roblox Studio MCP playtest controls. Read [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md), [`references/interrogate-panel.md`](references/interrogate-panel.md), and [`../../models.json`](../../models.json) before dispatching reviewers.
 
-The current DStack version does not assume that the parent model is different from a reviewer. Model diversity is real only when the client serves distinct, observable model identities. If every lane inherits one model, report a single-model review rather than calling it multi-model evidence.
+Every reviewer uses the runtime contract's exact worker pair. This is a single-model reviewer panel with independent contexts and high-capability parent judgment, not a multi-model panel. The parent checks the actual code and failure paths; agreement among workers is supporting evidence, not a quality guarantee.
 
 ## Step 1, Determine scope and risk
 
@@ -19,33 +19,19 @@ Identify the exact diff or files to review:
 
 Read the smallest surrounding contracts needed to trace behavior: Roblox repository instructions, typed Luau interfaces, remotes, persistence schemas, authored instance rules, and local verification scripts. Do not pull unrelated history or raw logs into every reviewer prompt.
 
-Classify the review before choosing a panel:
-
-- **local**: one clear owner and no external boundary — one reviewer;
-- **cross-module**: two or more modules/services or a replication contract — two reviewers;
-- **high-risk**: security, saved data, monetization, consequential RNG, networking, or a lifecycle boundary — three reviewers;
-- **critical**: an irreversible migration, release boundary, or explicitly requested maximum review — four reviewers, never more.
-
-Use fewer lanes when the diff is smaller than the risk class suggests. The panel is a cost budget, not a badge. Add a lane only when it can see the complete evidence and the parent can wait for it.
+Classify the review using the panel contract and select its budget from `models.json.riskPolicy`. Use fewer reviewers when the diff is smaller than the class suggests. Add a reviewer only when it can see the complete evidence and the parent can wait for it; queue reviewers beyond the runtime concurrency limit.
 
 ## Step 2, State the intent
 
 Write one paragraph describing what the change is intended to accomplish. Derive it from the user's request, repository decisions, commit/PR context, and the implementation. Review execution against the intent; do not redesign the product because a reviewer prefers a different goal. Ask the user only if the intent is genuinely unresolved.
 
-## Step 3, Resolve real model lanes
+## Step 3, Resolve the reviewer route
 
-Read the installed model configuration when present. Use the first valid source below:
+Use the worker pair and availability checks in the runtime contract for every reviewer. Never silently replace it with another model, lower its effort, or inherit the parent in a new worker. If the exact route is unavailable, perform a parent-only review and name the missing independent coverage. A client or model configuration file is not proof that a reviewer ran.
 
-1. a user-configured `interrogate reviewers` list;
-2. Claude's shipped `interrogate-haiku`, `interrogate-sonnet`, and `interrogate-opus` agent profiles;
-3. Codex's advertised `gpt-5.6-sol`, `gpt-5.6-terra`, and `gpt-5.6-luna` model overrides from `models.json`;
-4. one generic read-only reviewer inheriting the parent, explicitly labeled single-model.
+Give every reviewer the same intent, complete diff/file set, repository constraints, and rubric. Keep contexts independent and do not show one reviewer's findings to another before collection. Reviewers are leaves and stay read-only in a shared checkout.
 
-For every selected lane, validate the profile/model and requested effort before dispatch. Keep `model` and `reasoning_effort` (or Claude's `effort`) separate. A model name in a configuration file is not availability proof. If the client cannot serve a requested pair, follow its declared `skip`, `inherit`, or `fail-closed` policy and record the dropout. Never silently replace it with a weaker model, silently reduce the requested panel, or claim an unverified served identity.
-
-The reviewers are independent model lanes, not invented personas. Give every lane the same intent, complete diff/file set, repository constraints, and rubric. Do not show one reviewer's findings to another before collection.
-
-Launch all ready lanes in one dispatch wave using the active client's supported subagent surface. Codex uses `spawn_agent` with explicit model and reasoning values when available; Claude uses the named read-only agent profiles. If isolation is required, reviewers may read a shared checkout but may not write it. Retain each handle and wait for every launched lane before judging.
+Launch ready reviewers within the runtime concurrency cap, retain each handle, and drain queued reviews as slots free. The parent inspects critical paths independently while they work and waits for every launched reviewer before judging.
 
 ## Step 4, Fill the reviewer prompt
 
@@ -64,7 +50,7 @@ For each lane record its label, requested model and effort, route, served identi
 
 1. parse every result, including explicit `no findings`;
 2. deduplicate concrete issues and list all lanes that raised each one;
-3. mark consensus only when at least two independent lanes raised the same issue;
+3. mark agreement only when at least two independent reviewers raised the same issue, while acknowledging their shared model;
 4. keep lone findings visible and evaluate them on their evidence;
 5. record explicit disagreements and every coverage gap.
 
@@ -76,7 +62,7 @@ Read [`references/lead-judgment.md`](references/lead-judgment.md). As lead revie
 > [The stated intent paragraph]
 
 ### Reviewers
-- Reviewer [label]: [requested model], served [observed or unverified], [N findings], [complete evidence or gap]
+- Reviewer [label]: [requested model and effort], served [observed or unverified], [N findings], [complete evidence or gap]
 
 ### Act On
 [Concrete blockers, with evidence and lanes]
@@ -91,7 +77,7 @@ Read [`references/lead-judgment.md`](references/lead-judgment.md). As lead revie
 [Rejected findings and why]
 
 ### Agreement Map
-[Consensus, lone findings, disagreements, skipped lanes, and what the coverage means]
+[Agreement, lone findings, disagreements, skipped lanes, and what the coverage means]
 
 ### Verification boundary
 [Checks performed locally and the exact Roblox Studio checks the user must perform. State that DStack did not use Studio MCP playtest controls.]

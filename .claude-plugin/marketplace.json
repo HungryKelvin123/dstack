@@ -9,8 +9,8 @@
     {
       "name": "dstack",
       "source": "./plugins/dstack",
-      "description": "Engineering-grade Roblox and Luau workflows with David Mode, focused skills, and bounded multi-model review.",
-      "version": "0.6.6",
+      "description": "Roblox and Luau workflows with David Mode, parent-led planning, and bounded worker execution and review.",
+      "version": "0.6.7",
       "author": {
         "name": "HungryKelvin123"
       },
