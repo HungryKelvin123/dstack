@@ -26,7 +26,7 @@ The N candidates will receive the same prompt, so the prompt is the contract. Ge
 
 1. State the artifact each candidate is producing and why the requested comparison earns its repeated-context and review cost. Settle shared constraints in the parent before dispatch; candidates must not depend on each other's intermediate work.
 2. Derive the rubric. State what success looks like for *this* task, then turn it into 3-6 concrete gradeable criteria. Concrete: `Adds a --dry-run flag that skips writes`. Vague: `code is correct`. The rubric is the picker's tool in Phase D; candidates only see the task.
-3. Choose the smallest candidate set that tests distinct parent-defined alternatives, normally two. Every candidate uses the runtime contract's exact worker pair. Apply its concurrency limit and queue excess candidates. More attempts do not provide model diversity.
+3. Choose the smallest candidate set that tests distinct parent-defined alternatives, normally two. Every candidate uses the active client's exact worker route from the runtime contract. Apply its concurrency limit and queue excess candidates. More attempts do not provide model diversity.
 4. Assign output paths. Each candidate writes to its own location (a git worktree where possible, otherwise `/tmp1-<slug>/candidate-<n>/`). N candidates writing to the same path is shared mutable state and fails the **separate-before-serializing-shared-state** principle skill test.
 
 ## Phase B: Fan out

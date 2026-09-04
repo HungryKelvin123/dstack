@@ -67,7 +67,7 @@ Never infer that MCP is uninstalled merely because no Studio is connected. Never
 
 Read [`../david-mode/references/agent-runtime.md`](../david-mode/references/agent-runtime.md) before checking delegation. `models.json` is instruction metadata, not executable client configuration or proof of model availability. For an ordinary setup check, inspect advertised capabilities without spending model calls. Probe a worker only when the user explicitly asks to verify worker execution.
 
-Confirm that the user's chosen parent retains planning, difficult implementation, review, and integration. Check whether the client supports the requested parent effort and the exact `worker` model and effort. Missing worker controls mean sequential parent execution, including on clients whose native workers cannot use that pair. Do not install an unrequested model bridge or change global model settings.
+Confirm that the user's chosen parent retains planning, difficult implementation, review, and integration. Check the active client's exact worker policy: Codex requests Luna with `reasoningEffort: max`; Claude Code requests its native `haiku` route with `effort: max` when supported. Missing worker controls mean sequential parent execution, including when the native worker route cannot use that policy. Do not install an unrequested model bridge or change global model settings.
 
 Validate the policy's concurrency, revision, and leaf-worker limits. For an Interrogate panel, read [its panel contract](../interrogate/references/interrogate-panel.md) and use `riskPolicy`; independent contexts share one worker model and do not provide model diversity. Record requested settings separately from observed execution. `interrogate` never auto-applies findings.
 

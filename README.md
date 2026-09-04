@@ -25,7 +25,7 @@ the repository uses the same distribution shape as mature multi-client plugins:
     ├── .codex-plugin/plugin.json
     ├── .codex-plugin/prompts/             # explicit Codex prompt shims
     ├── hooks/                             # separate Claude and Codex hook configs
-    ├── models.json                        # parent/worker model policy and limits
+    ├── models.json                        # client-specific parent/worker policy and limits
     ├── references/                        # shared Roblox contracts
     └── skills/                            # one shared skill tree
 ```
@@ -114,7 +114,7 @@ David Mode reads repository instructions and source first, chooses the smallest 
 
 your selected high-capability model, such as Sol, is the parent. it plans in order: architecture, module contracts, then execution tasks. it writes the difficult code, reviews every worker's actual changes, requests corrections, and owns integration and final checks. choose the highest reasoning effort your parent model supports for large work. dstack cannot change a running model's settings just by saying so.
 
-every subagent uses `gpt-5.6-luna` at `max` reasoning effort. that includes searchers, implementers, reviewers, and judges. workers do not spawn more workers. there is no alternate worker model pool.
+Codex subagents use `gpt-5.6-luna` at `max` reasoning effort. Claude Code subagents use Claude's native `haiku` route at `max` effort when that client/model pair supports it. The policies are separate because Luna is a Codex model, not a Claude model. Searchers, implementers, reviewers, and judges all use the active client's configured worker route. workers do not spawn more workers.
 
 David Mode can delegate routine work without you separately invoking Swarm, but only when it earns the overhead:
 
@@ -124,9 +124,9 @@ David Mode can delegate routine work without you separately invoking Swarm, but 
 - start with at most two concurrent workers, with a cap of three. add the third only when earlier output justifies the coordination cost. fewer is fine; queue the rest.
 - hand off named files, diffs, tests, and settled interfaces. the parent verifies them before releasing a dependent batch. workers get distinct ownership, not the same broad job.
 
-hard architecture, new security or data contracts, and other uncertain code stay with the parent. routine code inside a settled contract can go to Luna even when the surrounding update matters a lot.
+hard architecture, new security or data contracts, and other uncertain code stay with the parent. routine code inside a settled contract can go to the active client's worker route even when the surrounding update matters a lot.
 
-[`models.json`](./plugins/dstack/models.json) and the [runtime contract](./plugins/dstack/skills/david-mode/references/agent-runtime.md) define this policy. they are instructions, not a model-routing service. if the client cannot request the exact worker model and effort, the parent continues sequentially and reports the limitation. Claude Code still uses the shared skills and hooks, but native Claude worker aliases are not Luna substitutes; delegation needs an already-supported route to the exact pair. dstack does not install a bridge for you.
+[`models.json`](./plugins/dstack/models.json) and the [runtime contract](./plugins/dstack/skills/david-mode/references/agent-runtime.md) define this policy. they are instructions, not a model-routing service. if the client cannot request its exact native worker model and effort, the parent continues sequentially and reports the limitation. dstack does not install a model bridge for you.
 
 ## skills
 
@@ -167,7 +167,7 @@ David Mode also reads the small `principle-*` skills only when their rule fits t
 
 ## Interrogate and model use
 
-Interrogate uses independent Luna-`max` contexts and a parent review. it is not a multi-model panel, and agreement between reviewers is not proof of correctness. its reviewer budgets are ceilings, not minimums:
+Interrogate uses independent contexts from the active client's worker policy and a parent review. Codex uses Luna-`max`; Claude Code uses native Haiku-`max` when supported. it is not a multi-model panel, and agreement between reviewers is not proof of correctness. its reviewer budgets are ceilings, not minimums:
 
 - one reviewer for a local change;
 - two for a cross-module change;
@@ -226,7 +226,7 @@ Run the repository checks from the root:
 node --test tests/*.test.mjs
 ```
 
-The tests check the nested marketplace structure, both manifests, prompt shims, internal links, invocation policy, David Mode state, the missing-versus-closed MCP setup gate, the shared worker policy, and the permanent Studio no-playtest boundary. Policy checks do not prove that a client actually served a requested model or effort.
+The tests check the nested marketplace structure, both manifests, prompt shims, internal links, invocation policy, David Mode state, the missing-versus-closed MCP setup gate, the client-specific worker policy, and the permanent Studio no-playtest boundary. Policy checks do not prove that a client actually served a requested model or effort.
 
 ## origin and license
 

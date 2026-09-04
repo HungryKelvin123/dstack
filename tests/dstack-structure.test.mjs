@@ -143,16 +143,20 @@ test("Roblox Studio MCP setup distinguishes missing from closed and pauses for r
   assert.match(davidMode, /successful.*setup.*ends the turn/i);
 });
 
-test("worker metadata pins the model and effort without replacing the parent", async () => {
+test("client worker metadata pins native routes without replacing the parent", async () => {
   const models = JSON.parse(await fs.readFile(path.join(pluginRoot, "models.json"), "utf8"));
 
-  assert.equal(models.schemaVersion, 2);
+  assert.equal(models.schemaVersion, 3);
   assert.equal(models.orchestrator.model, "user-selected-parent");
   assert.equal(models.orchestrator.reasoningEffort, "highest-supported");
   assert.deepEqual(models.orchestrator.owns, ["planning", "architecture", "difficult-implementation", "worker-review", "integration", "final-verification"]);
-  assert.deepEqual(models.worker, { model: "gpt-5.6-luna", reasoningEffort: "max", fallback: "sequential-parent" });
+  assert.deepEqual(models.workers, {
+    codex: { model: "gpt-5.6-luna", reasoningEffort: "max", fallback: "sequential-parent" },
+    claude: { model: "haiku", effort: "max", fallback: "sequential-parent" },
+  });
   assert.deepEqual(models.delegation, { defaultMaxConcurrentWorkers: 2, maxConcurrentWorkers: 3, maxWorkerRevisions: 1, allowNestedDelegation: false });
   assert.deepEqual(models.riskPolicy, { local: 1, crossModule: 2, securityDataMonetization: 3, critical: 4 });
+  assert.equal(models.worker, undefined);
   assert.equal(models.claude, undefined);
   assert.equal(models.codex, undefined);
 });
@@ -172,6 +176,12 @@ test("delegating workflows resolve one shared runtime and worker brief", async (
   const runtimeLinks = await linksFrom(runtimePath);
   assert.ok(runtimeLinks.includes(path.join(pluginRoot, "models.json")));
   assert.ok(runtimeLinks.includes(path.join(skillsRoot, "david-mode", "references", "worker-brief.md")));
+  const runtime = await fs.readFile(runtimePath, "utf8");
+  assert.match(runtime, /workers\.codex/);
+  assert.match(runtime, /workers\.claude/);
+  assert.match(runtime, /native Agent\/subagent route/i);
+  const readme = await fs.readFile(path.join(root, "README.md"), "utf8");
+  assert.match(readme, /Claude Code subagents use .*native `haiku` route/i);
   const panelLinks = await linksFrom(path.join(skillsRoot, "interrogate", "references", "interrogate-panel.md"));
   assert.ok(panelLinks.includes(path.join(pluginRoot, "models.json")));
 });

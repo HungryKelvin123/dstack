@@ -1,6 +1,6 @@
 # Interrogate panel contract
 
-The parent chooses the review budget from [`../../../models.json`](../../../models.json), dispatches independent workers under the shared runtime contract, and judges every finding against the actual code. Record the served model when observable.
+The parent chooses the review budget from [`../../../models.json`](../../../models.json), dispatches independent workers under the shared runtime contract, and judges every finding against the actual code. Each client uses its own native worker policy; record the requested route and served model when observable.
 
 ## Risk budget
 
@@ -15,11 +15,11 @@ The count is a ceiling for useful reviews, not a minimum charge. Queue any revie
 
 ## Dispatch and judgment
 
-All reviewers use the exact configured worker model and effort. Each receives the same filled reviewer prompt, intent, evidence, and rubric in an independent context. This is a single-model reviewer panel. Do not manufacture diversity with different model labels or claim multi-model coverage because several workers ran.
+All reviewers use the active client's exact configured worker model and effort. Codex uses Luna-max; Claude Code uses native Haiku-max when supported. Each receives the same filled reviewer prompt, intent, evidence, and rubric in an independent context. This is a single-model reviewer panel within the active client. Do not manufacture diversity with different model labels or claim multi-model coverage because several workers ran.
 
 Reviewers are read-only leaves. They do not edit the repository, call external services, change model configuration, delegate, or use Roblox Studio MCP playtest controls. The parent reads all results, verifies the cited failure paths, resolves disagreements, and makes the Act on / Consider / Noted / Dismissed judgment. Interrogate never applies a finding automatically.
 
-If the exact worker pair cannot run, use a parent-only review and identify the coverage gap. Do not fill an unavailable reviewer slot by launching a different model. Report incomplete reviews as incomplete.
+If the active client's exact worker route cannot run, use a parent-only review and identify the coverage gap. Do not fill an unavailable reviewer slot by launching a different model. Report incomplete reviews as incomplete.
 
 ## Receipt fields
 

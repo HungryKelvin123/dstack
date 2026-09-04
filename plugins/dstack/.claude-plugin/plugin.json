@@ -1,8 +1,8 @@
 {
   "name": "dstack",
   "displayName": "DStack",
-  "version": "0.6.7",
-  "description": "Roblox and Luau workflows with parent-led planning, bounded Luna workers where supported, and sequential parent fallback. Studio MCP stays non-playtest.",
+  "version": "0.6.8",
+  "description": "Roblox and Luau workflows with parent-led planning, Codex Luna or Claude-native workers where supported, and sequential parent fallback. Studio MCP stays non-playtest.",
   "author": {
     "name": "HungryKelvin123"
   },

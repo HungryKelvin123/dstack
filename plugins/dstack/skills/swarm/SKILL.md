@@ -7,7 +7,7 @@ description: "Coordinate independent routine execution or exploration batches an
 
 Before delegating or using optional capabilities, read [the runtime contract](../david-mode/references/agent-runtime.md). It owns eligibility, model selection, limits, and fallback.
 
-Coordinate isolated workers for routine batches whose interfaces and acceptance criteria the parent has decided. Prefer distinct slices; duplicate attempts require an explicit comparison request. The parent plans the work, handles difficult implementation, reviews results, and returns one report. Use the runtime contract's exact worker pair and fallback for every worker.
+Coordinate isolated workers for routine batches whose interfaces and acceptance criteria the parent has decided. Prefer distinct slices; duplicate attempts require an explicit comparison request. The parent plans the work, handles difficult implementation, reviews results, and returns one report. Use the active client's exact worker route and fallback from the runtime contract for every worker.
 
 ## Start
 

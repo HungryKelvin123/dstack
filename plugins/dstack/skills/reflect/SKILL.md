@@ -27,7 +27,7 @@ Use the supported Codex task-history API for the current task when available. Ke
 
 ### 2. Review through three lenses
 
-Apply the lenses in the parent when the task fits one context. If independent reviews earn their overhead under the runtime gates, dispatch them within its concurrency limit using the exact worker pair. Only the review lens differs. Connector lookups remain read-only and limited to sources referenced by the task. The parent makes the synthesis decisions and applies authorized edits.
+Apply the lenses in the parent when the task fits one context. If independent reviews earn their overhead under the runtime gates, dispatch them within its concurrency limit using the active client's exact worker route. Only the review lens differs. Connector lookups remain read-only and limited to sources referenced by the task. The parent makes the synthesis decisions and applies authorized edits.
 
 | Lens | Prompt template |
 |---|---|

@@ -9,8 +9,8 @@
     {
       "name": "dstack",
       "source": "./plugins/dstack",
-      "description": "Roblox and Luau workflows with David Mode, parent-led planning, and bounded worker execution and review.",
-      "version": "0.6.7",
+      "description": "Roblox and Luau workflows with David Mode, parent-led planning, and client-native bounded worker execution and review.",
+      "version": "0.6.8",
       "author": {
         "name": "HungryKelvin123"
       },
